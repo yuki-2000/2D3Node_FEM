@@ -125,10 +125,6 @@ with open('input_point.txt') as f:
         node[i] = input_point.split(',')[1:3]
         
 
-plt.scatter(node[:,0], node[:,1])
-plt.show()
-
-
 with open('input_eleme.txt') as f:
     l = f.readlines()
     for i, input_eleme in enumerate(l):
@@ -153,8 +149,25 @@ with open('input_forcednodes.txt') as f:
 
 
 
-
-
+#メッシュの可視化
+#https://qiita.com/itotomball/items/e63039d186fa1f564513
+#接点番号は1から、pythonの行番号は0から始まるので修正
+triangles = eleme -1
+#各メッシュの値。今回はないので0
+C = np.zeros(num_eleme)
+fig = plt.figure(figsize=(8.0,3.0))
+ax = fig.add_subplot()
+fig.suptitle("input mesh")
+#cmapについてはこちら
+#https://beiznotes.org/matplot-cmap-list/
+tpc = ax.tripcolor(node[:,0], node[:,1], triangles, C, edgecolors='black', cmap='jet')
+# カラーバーを表示
+fig.colorbar(tpc)
+# アスペクト比を1対1に, レイアウトを調整
+ax.set_aspect('equal')
+fig.tight_layout()
+plt.show()
+#fig.savefig('input_mesh.png')
 
 
 
@@ -348,10 +361,18 @@ for i in range(num_eleme):
 print( 'MAKE K-MATRIX')
 
 
-plt.spy(Kmat)
 
 
-
+#疎行列の可視化
+fig = plt.figure()
+ax = fig.add_subplot()
+fig.suptitle("Kmat")
+ax.spy(Kmat)
+# アスペクト比を1対1に, レイアウトを調整
+#ax.set_aspect('equal')
+fig.tight_layout()
+plt.show()
+#fig.savefig('Kmat.png')
 
 
 
@@ -435,12 +456,12 @@ known_DOF   = np.empty(num_fix, dtype=np.int32)              #既知節点変位
 unknown_DOF = np.empty(2*num_node - num_fix, dtype=np.int32) #未知節点変位ベクトルの自由度
 
 K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列
+K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
 F2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列
 U1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列
-U2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列
+U2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列　#与えられる
 
 
 
@@ -479,7 +500,7 @@ for j in range(2*num_node):
         num += 1
         
 
-#行列の変形
+#行列の変形、線形代数を復習したほうが良さそう
 for i in range(2*num_node-num_fix):
     for j in range(2*num_node-num_fix):
         K11[i,j] = Kmat[unknown_DOF[i], unknown_DOF[j]]
@@ -633,5 +654,43 @@ for i in range(num_eleme):
 
 print('CALCULATE DISTRIBUTIONS')
 
+
+
+
+
+
+
+
+
+
+
+#可視化
+#https://qiita.com/itotomball/items/e63039d186fa1f564513
+
+
+result_list = (('strain_x', strain[0]),('strain_y', strain[1]),('strain_xy', strain[2]),('stress_x', stress[0]),('stress_y', stress[1]),('stress_xy', stress[2]))
+for title, C in result_list:
+
+
+    #接点番号は1から、pythonの行番号は0から始まるので修正
+    triangles = eleme -1
+    fig = plt.figure(figsize=(8.0,3.0))
+    ax = fig.add_subplot()
+
+    fig.suptitle(title)
+    #cmapについてはこちら
+    #https://beiznotes.org/matplot-cmap-list/
+    tpc = ax.tripcolor(disp[:,0], disp[:,1], triangles, C, edgecolors='black', cmap='jet')
+    # カラーバーを表示
+    fig.colorbar(tpc)
+    # アスペクト比を1対1に, レイアウトを調整
+    ax.set_aspect('equal')
+    plt.show()
+    fig.savefig(f'result_{title}.png')
+    
+    
+    
+    
+    
 
 
