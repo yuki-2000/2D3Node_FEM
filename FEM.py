@@ -387,11 +387,6 @@ plt.show()
 
 
 
-#消費メモリ量
-#https://qiita.com/kpasso1015/items/83062ac14c3c44907e5b
-print("Kmat memory:", Kmat.__sizeof__(), "Byte")
-
-
 
 
 # makeFmat (NUM_NODE, NUM_FORCE, Fmat, force_pnt, force)
@@ -704,5 +699,13 @@ for title, C in result_list:
     
     
     
+#メモリ確認
+#http://harmonizedai.com/article/%E5%A4%89%E6%95%B0%E3%81%AE%E3%83%A1%E3%83%A2%E3%83%AA%E5%86%85%E5%AE%B9%E3%82%92%E4%B8%80%E8%A6%A7%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6/
+import sys
 
+print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+print(" ------------------------------------ ")
+for var_name in dir():
+    if not var_name.startswith("_"):
+        print("{}{: >15}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
 
