@@ -549,8 +549,8 @@ print('MAKE SUB-MATRIX')
 # 逆行列のアルゴリズムがわからない。
 
 #test ちゃんと単位行列になるか
-K11inv = np.linalg.inv(K11)
-a = np.dot(K11inv, K11)
+#K11inv = np.linalg.inv(K11)
+#a = np.dot(K11inv, K11)
 
 
 #K11を上書きして逆行列
