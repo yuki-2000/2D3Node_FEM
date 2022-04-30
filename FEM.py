@@ -343,8 +343,8 @@ BtDB   = np.zeros((6,6), dtype=np.float64)  #
 
 for i in range(num_eleme):
     #要素剛性マトリックスの構築 P.135 式(5.94)
-    BtD = np.dot(Bmat[:,:,i].T, Dmat)
-    BtDB = np.dot(BtD, Bmat[:,:,i])
+    BtD = Bmat[:,:,i].T @ Dmat
+    BtDB = BtD @ Bmat[:,:,i]
     e_Kmat = Ae[i] * thickness * BtDB 
     
     #全体剛性マトリックスへの組込み P.137 式(5.97)
@@ -561,7 +561,7 @@ lap_time = time.time()
 
 #test ちゃんと単位行列になるか
 #K11inv = np.linalg.inv(K11)
-#a = np.dot(K11inv, K11)
+#a = K11inv @ K11
 originalK11 = K11.copy()
 
 #K11を上書きして逆行列
@@ -602,14 +602,10 @@ fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-K
 
 #P.139 式(5.104)
 #一気に計算する
-#fku = F1 - np.dot(K12, U2)
-#疎行列
 fku = F1 - K12 @ U2
 
 #K11は逆行列をすでにとっている。
 #U1は未知成分だったが、ここで判明
-#U1 = np.dot(K11, fku)
-#疎行列
 U1 = K11 @ fku
 
 #もっとパイソニックに書きたい
@@ -636,8 +632,6 @@ lap_time = time.time()
 
 #K21=K12.T 対称性より
 #F2は未知成分だったが、ここで判明
-#F2 = np.dot(K12.T, U1) + np.dot(K22, U2)
-#疎行列
 F2 = K12.T @ U1 + K22 @ U2
 
 #もっとパイソニックに書きたい
@@ -698,8 +692,8 @@ for i in range(num_eleme):
         e_Umat[2*j]   = Umat[2*(eleme[i,j]-1)]     #三角形要素のx変位
         e_Umat[2*j+1] = Umat[2*(eleme[i,j]-1)+1]   #三角形要素のy変位
 
-    strain[:,i] = np.dot(Bmat[:,:,i], e_Umat)
-    stress[:,i] = np.dot(Dmat, strain[:,i])
+    strain[:,i] = Bmat[:,:,i] @ e_Umat
+    stress[:,i] = Dmat @ strain[:,i]
 
 
 print('CALCULATE DISTRIBUTIONS')
