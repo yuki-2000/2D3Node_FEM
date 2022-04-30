@@ -338,14 +338,16 @@ Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マト
 e_Kmat = np.zeros((6,6), dtype=np.float64)  #要素剛性マトリックス
 
 #定数になってしまうのでTをtに変更
-BtD    = np.zeros((6,3), dtype=np.float64)  #
-BtDB   = np.zeros((6,6), dtype=np.float64)  #
+#BtD    = np.zeros((6,3), dtype=np.float64)  #fortran二はあったが、確保する必要なし
+#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortran二はあったが、確保する必要なし
 
 for i in range(num_eleme):
     #要素剛性マトリックスの構築 P.135 式(5.94)
-    BtD = Bmat[:,:,i].T @ Dmat
-    BtDB = BtD @ Bmat[:,:,i]
-    e_Kmat = Ae[i] * thickness * BtDB 
+    #BtD = Bmat[:,:,i].T @ Dmat
+    #BtDB = BtD @ Bmat[:,:,i]
+    #e_Kmat = Ae[i] * thickness * BtDB 
+    #一発で、メモリのほんのちょっとの節約
+    e_Kmat = Ae[i] * thickness * Bmat[:,:,i].T @ Dmat @ Bmat[:,:,i]
     
     #全体剛性マトリックスへの組込み P.137 式(5.97)
 
@@ -371,6 +373,7 @@ for i in range(num_eleme):
 #疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
 #Kmat = lil_matrix(Kmat)
 #Kmat = csr_matrix(Kmat)
+#Kmat = csc_matrix(Kmat)
 
 
 print( 'MAKE K-MATRIX')
@@ -565,11 +568,13 @@ lap_time = time.time()
 originalK11 = K11.copy()
 
 #K11を上書きして逆行列
-#K11 = np.linalg.inv(K11)
+K11 = np.linalg.inv(K11)
+
 #疎行列
+#普通より遅い
 #csc_matrixを使わないと非効率
-K11 = csc_matrix(K11)
-K11 = inv(K11)
+#K11 = csc_matrix(K11)
+#K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
 
@@ -598,15 +603,18 @@ lap_time = time.time()
 
 
 #U1  = np.zeros((2*num_node-num_fix), dtype=np.float64)   #変位境界条件付加後の小行列 #前に作成済み
-fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-Kd) #大文字から小文字に変更
+#fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-Kd) #大文字から小文字に変更 いらない
 
 #P.139 式(5.104)
 #一気に計算する
-fku = F1 - K12 @ U2
+#fku = F1 - K12 @ U2
 
 #K11は逆行列をすでにとっている。
 #U1は未知成分だったが、ここで判明
-U1 = K11 @ fku
+#U1 = K11 @ fku
+
+#一気に、メモリの節約
+U1 = K11 @ (F1 - K12 @ U2)
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
@@ -752,9 +760,9 @@ for matrix_name in["Kmat", "K11", "K12", "K22", "originalK11" ] :
 #http://harmonizedai.com/article/%E5%A4%89%E6%95%B0%E3%81%AE%E3%83%A1%E3%83%A2%E3%83%AA%E5%86%85%E5%AE%B9%E3%82%92%E4%B8%80%E8%A6%A7%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6/
 
 
-print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory[Byte]','|'))
+print("{}{: >15}{}{: >15}{}".format('|','Variable Name','|','Memory[Byte]','|'))
 print(" ------------------------------------ ")
 for var_name in dir():
     if not var_name.startswith("_"):
-        print("{}{: >15}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
+        print("{}{: >15}{}{: >15}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
 
