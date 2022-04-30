@@ -60,6 +60,13 @@ node番号!=配列番号
 
 import numpy as np
 from matplotlib import pyplot as plt
+import time
+import sys
+
+
+#処理時間計測
+start_time = time.time()
+lap_time = time.time()
 
 
 
@@ -150,29 +157,14 @@ with open('input_forcednodes.txt') as f:
 
 print("Finish reading input text")
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
 
-#メッシュの可視化
-#https://qiita.com/itotomball/items/e63039d186fa1f564513
-#接点番号は1から、pythonの行番号は0から始まるので修正
-triangles = eleme -1
-#各メッシュの値。今回はないので0
-C = np.zeros(num_eleme)
-fig = plt.figure(figsize=(8.0,3.0))
-ax = fig.add_subplot()
-fig.suptitle("input mesh")
-#cmapについてはこちら
-#https://beiznotes.org/matplot-cmap-list/
-tpc = ax.tripcolor(node[:,0], node[:,1], triangles, C, edgecolors='black', cmap='jet')
-# カラーバーを表示
-fig.colorbar(tpc)
-# アスペクト比を1対1に, レイアウトを調整
-ax.set_aspect('equal')
-fig.tight_layout()
-plt.show()
-#fig.savefig('input_mesh.png')
+
 
 
 
@@ -224,7 +216,9 @@ Dmat[2,2] = Young / (1 - (Poisson ** 2)) * (1- Poisson) / 2
 
 print('MAKE D-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -265,6 +259,7 @@ e_node = np.empty((3,2), dtype=np.float64) #不明　ある三角形elementを�
 
 #配列0始まりに変更
 #eleme[i,j]は接点番号であり、pythonにおける配列位置にするためには-1する必要あり
+#enodeは要素を構成する接点の座標
 for i in range(num_eleme):
     for j in range(3):
         e_node[j,0] = node[eleme[i,j]-1,0]
@@ -308,7 +303,9 @@ for i in range(num_eleme):
 
 print('MAKE B-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -371,19 +368,12 @@ for i in range(num_eleme):
 
 print( 'MAKE K-MATRIX')
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
-#疎行列の可視化
-fig = plt.figure()
-ax = fig.add_subplot()
-fig.suptitle("Kmat")
-ax.spy(Kmat)
-# アスペクト比を1対1に, レイアウトを調整
-#ax.set_aspect('equal')
-fig.tight_layout()
-plt.show()
-#fig.savefig('Kmat.png')
 
 
 
@@ -430,8 +420,8 @@ Umat = np.zeros((2*num_node), dtype=np.float64)
 
 
 
-for i in range(num_force):
-    #force_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
+for i in range(num_fix):
+    #fix_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
     #pythonの配列番号0始まりに変更
     Umat[2*(fix_pnt[i,0]-1) + fix_pnt[i,1] -1] = fix[i]
@@ -530,6 +520,13 @@ for i in range(num_fix):
 print('MAKE SUB-MATRIX')
 
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
+
+
+
+
 
 
 
@@ -549,12 +546,31 @@ print('MAKE SUB-MATRIX')
 # 逆行列のアルゴリズムがわからない。
 
 #test ちゃんと単位行列になるか
-K11inv = np.linalg.inv(K11)
-a = np.dot(K11inv, K11)
+#K11inv = np.linalg.inv(K11)
+#a = np.dot(K11inv, K11)
 
 
 #K11を上書きして逆行列
 K11 = np.linalg.inv(K11)
+
+
+print('MAKE K11-INV-MATRIX')
+
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -586,8 +602,9 @@ for i in range(2*num_node-num_fix):
 
 print('SOLVE U-MATRIX')
 
-
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -610,7 +627,9 @@ for i in range(num_fix):
 
 print('SOLVE F-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -633,7 +652,9 @@ for i in range(num_node):
 
 print('CALCULATE DISPLACEMENT')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -661,11 +682,12 @@ for i in range(num_eleme):
 
 print('CALCULATE DISTRIBUTIONS')
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
+
 
 #output省略
-
-
-
 
 
 
@@ -675,7 +697,7 @@ print('CALCULATE DISTRIBUTIONS')
 #https://qiita.com/itotomball/items/e63039d186fa1f564513
 
 
-result_list = (('strain_x', strain[0]),('strain_y', strain[1]),('strain_xy', strain[2]),('stress_x', stress[0]),('stress_y', stress[1]),('stress_xy', stress[2]))
+result_list = (('mesh', np.zeros(num_eleme)),('strain_x', strain[0]),('strain_y', strain[1]),('strain_xy', strain[2]),('stress_x', stress[0]),('stress_y', stress[1]),('stress_xy', stress[2]))
 for title, C in result_list:
 
 
@@ -695,15 +717,28 @@ for title, C in result_list:
     plt.show()
     #fig.savefig(f'result_{title}.png')
     
-    
+
+
+
+
+#疎行列の可視化
+fig = plt.figure()
+ax = fig.add_subplot()
+fig.suptitle("Kmat")
+ax.spy(Kmat)
+# アスペクト比を1対1に, レイアウトを調整
+#ax.set_aspect('equal')
+fig.tight_layout()
+plt.show()
+#fig.savefig('Kmat.png')
     
     
     
 #メモリ確認
 #http://harmonizedai.com/article/%E5%A4%89%E6%95%B0%E3%81%AE%E3%83%A1%E3%83%A2%E3%83%AA%E5%86%85%E5%AE%B9%E3%82%92%E4%B8%80%E8%A6%A7%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6/
-import sys
 
-print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+
+print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory[Byte]','|'))
 print(" ------------------------------------ ")
 for var_name in dir():
     if not var_name.startswith("_"):
