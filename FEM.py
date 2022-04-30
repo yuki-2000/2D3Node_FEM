@@ -466,7 +466,7 @@ K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変�
 K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 
-#疎行列 代入はlil
+#疎行列 代入はlil　遅い
 #K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
 #K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 #K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
@@ -565,7 +565,7 @@ lap_time = time.time()
 #test ちゃんと単位行列になるか
 #K11inv = np.linalg.inv(K11)
 #a = K11inv @ K11
-originalK11 = K11.copy()
+#originalK11 = K11.copy()
 
 #K11を上書きして逆行列
 #K11 = np.linalg.inv(K11)
@@ -616,16 +616,13 @@ lap_time = time.time()
 #一気に、メモリの節約
 #U1 = K11 @ (F1 - K12 @ U2)
 
-#テストcsr_matrix, csc_matrix, coo_matrix, lil_matrix
+#連立方程式を解く。　早い
 #http://www.turbare.net/transl/scipy-lecture-notes/advanced/scipy_sparse/solvers.html#sparse-direct-solvers
+#https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
 #sparce@ndarry=ndarray, coo_matrix(1D)=[1,n]の2次元
 K11 =  coo_matrix(K11).tocsr()
-#F1 =  coo_matrix(F1).tocsr()
-#K12 = coo_matrix(K12).tocsr()
-#U2 =  coo_matrix(U2).tocsr()
-#１次元のndarrayを疎行列に変換すると、1行n列の2次元に変換されてしまうため、Tを使う必要あり。
-temp = coo_matrix(F1 - K12 @ U2).tocsr().T
-U1 = dsolve.spsolve(K11, temp, use_umfpack=True)
+#うまくndarrayが返ってくる。
+U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
@@ -753,7 +750,7 @@ for title, C in result_list:
     #fig.savefig(f'result_{title}.png')
     
 
-for matrix_name in["Kmat", "K11", "K12", "K22", "originalK11" ] :
+for matrix_name in["Kmat", "K11", "K12", "K22"] :
     #疎行列の可視化
     fig = plt.figure()
     ax = fig.add_subplot()
