@@ -60,6 +60,13 @@ node番号!=配列番号
 
 import numpy as np
 from matplotlib import pyplot as plt
+import time
+import sys
+
+
+#処理時間計測
+start_time = time.time()
+lap_time = time.time()
 
 
 
@@ -150,6 +157,9 @@ with open('input_forcednodes.txt') as f:
 
 print("Finish reading input text")
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -224,7 +234,9 @@ Dmat[2,2] = Young / (1 - (Poisson ** 2)) * (1- Poisson) / 2
 
 print('MAKE D-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -265,6 +277,7 @@ e_node = np.empty((3,2), dtype=np.float64) #不明　ある三角形elementを�
 
 #配列0始まりに変更
 #eleme[i,j]は接点番号であり、pythonにおける配列位置にするためには-1する必要あり
+#enodeは要素を構成する接点の座標
 for i in range(num_eleme):
     for j in range(3):
         e_node[j,0] = node[eleme[i,j]-1,0]
@@ -308,7 +321,9 @@ for i in range(num_eleme):
 
 print('MAKE B-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -371,7 +386,9 @@ for i in range(num_eleme):
 
 print( 'MAKE K-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 #疎行列の可視化
@@ -530,6 +547,13 @@ for i in range(num_fix):
 print('MAKE SUB-MATRIX')
 
 
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
+
+
+
+
 
 
 
@@ -555,6 +579,25 @@ print('MAKE SUB-MATRIX')
 
 #K11を上書きして逆行列
 K11 = np.linalg.inv(K11)
+
+
+print('MAKE K11-INV-MATRIX')
+
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -586,8 +629,9 @@ for i in range(2*num_node-num_fix):
 
 print('SOLVE U-MATRIX')
 
-
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -610,7 +654,9 @@ for i in range(num_fix):
 
 print('SOLVE F-MATRIX')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -633,7 +679,9 @@ for i in range(num_node):
 
 print('CALCULATE DISPLACEMENT')
 
-
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 
@@ -660,6 +708,10 @@ for i in range(num_eleme):
 
 
 print('CALCULATE DISTRIBUTIONS')
+
+print("経過時間:", time.time() - start_time)
+print("処理時間:", time.time() - lap_time)
+lap_time = time.time()
 
 
 #output省略
@@ -701,9 +753,9 @@ for title, C in result_list:
     
 #メモリ確認
 #http://harmonizedai.com/article/%E5%A4%89%E6%95%B0%E3%81%AE%E3%83%A1%E3%83%A2%E3%83%AA%E5%86%85%E5%AE%B9%E3%82%92%E4%B8%80%E8%A6%A7%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6/
-import sys
 
-print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+
+print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory[Byte]','|'))
 print(" ------------------------------------ ")
 for var_name in dir():
     if not var_name.startswith("_"):
