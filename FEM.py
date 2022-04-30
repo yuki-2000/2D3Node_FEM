@@ -371,7 +371,7 @@ for i in range(num_eleme):
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
 #疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
-#Kmat = lil_matrix(Kmat)
+Kmat = lil_matrix(Kmat)
 #Kmat = csr_matrix(Kmat)
 #Kmat = csc_matrix(Kmat)
 
@@ -462,14 +462,14 @@ for i in range(num_fix):
 known_DOF   = np.empty(num_fix, dtype=np.int32)              #既知節点変位ベクトルの自由度  #既知接点変位の行番号であり、未知荷重行に対応
 unknown_DOF = np.empty(2*num_node - num_fix, dtype=np.int32) #未知節点変位ベクトルの自由度
 
-K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
+#K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
+#K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
+#K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 
-#疎行列
-#K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-#K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-#K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
+#疎行列 代入はlil
+K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
+K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
+K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
 
 
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
@@ -568,13 +568,13 @@ lap_time = time.time()
 originalK11 = K11.copy()
 
 #K11を上書きして逆行列
-K11 = np.linalg.inv(K11)
+#K11 = np.linalg.inv(K11)
 
 #疎行列
 #普通より遅い
-#csc_matrixを使わないと非効率
-#K11 = csc_matrix(K11)
-#K11 = inv(K11)
+#invはcsc_matrixを使わないと非効率
+K11 = csc_matrix(K11)
+K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
 
