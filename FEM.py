@@ -334,9 +334,7 @@ lap_time = time.time()
 
 
 #配列の初期化
-#Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マトリックス
-#疎行列
-Kmat = lil_matrix((2*num_node,2*num_node), dtype=np.float64)
+Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マトリックス
 e_Kmat = np.zeros((6,6), dtype=np.float64)  #要素剛性マトリックス
 
 #定数になってしまうのでTをtに変更
@@ -370,6 +368,9 @@ for i in range(num_eleme):
             #1行でできる
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
+#疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
+#Kmat = lil_matrix(Kmat)
+#Kmat = csr_matrix(Kmat)
 
 
 print( 'MAKE K-MATRIX')
@@ -458,14 +459,14 @@ for i in range(num_fix):
 known_DOF   = np.empty(num_fix, dtype=np.int32)              #既知節点変位ベクトルの自由度  #既知接点変位の行番号であり、未知荷重行に対応
 unknown_DOF = np.empty(2*num_node - num_fix, dtype=np.int32) #未知節点変位ベクトルの自由度
 
-#K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-#K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-#K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
+K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
+K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
+K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 
 #疎行列
-K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
+#K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
+#K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
+#K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
 
 
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
@@ -565,6 +566,9 @@ originalK11 = K11.copy()
 
 #K11を上書きして逆行列
 #K11 = np.linalg.inv(K11)
+#疎行列
+#csc_matrixを使わないと非効率
+K11 = csc_matrix(K11)
 K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
@@ -600,13 +604,13 @@ fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-K
 #一気に計算する
 #fku = F1 - np.dot(K12, U2)
 #疎行列
-fku = F1 - K12 * U2
+fku = F1 - K12 @ U2
 
 #K11は逆行列をすでにとっている。
 #U1は未知成分だったが、ここで判明
 #U1 = np.dot(K11, fku)
 #疎行列
-U1 = K11 * fku
+U1 = K11 @ fku
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
@@ -634,7 +638,7 @@ lap_time = time.time()
 #F2は未知成分だったが、ここで判明
 #F2 = np.dot(K12.T, U1) + np.dot(K22, U2)
 #疎行列
-F2 = K12.T * U1 + K22 * U2
+F2 = K12.T @ U1 + K22 @ U2
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
