@@ -148,6 +148,11 @@ with open('input_forcednodes.txt') as f:
 
 
 
+print("Finish reading input text")
+
+
+
+
 
 #メッシュの可視化
 #https://qiita.com/itotomball/items/e63039d186fa1f564513
@@ -168,6 +173,12 @@ ax.set_aspect('equal')
 fig.tight_layout()
 plt.show()
 #fig.savefig('input_mesh.png')
+
+
+
+
+
+
 
 
 
@@ -376,8 +387,9 @@ plt.show()
 
 
 
-
-
+#消費メモリ量
+#https://qiita.com/kpasso1015/items/83062ac14c3c44907e5b
+print("Kmat memory:", Kmat.__sizeof__(), "Byte")
 
 
 
@@ -655,7 +667,7 @@ for i in range(num_eleme):
 print('CALCULATE DISTRIBUTIONS')
 
 
-
+#output省略
 
 
 
@@ -686,7 +698,7 @@ for title, C in result_list:
     # アスペクト比を1対1に, レイアウトを調整
     ax.set_aspect('equal')
     plt.show()
-    fig.savefig(f'result_{title}.png')
+    #fig.savefig(f'result_{title}.png')
     
     
     
