@@ -164,25 +164,7 @@ lap_time = time.time()
 
 
 
-#メッシュの可視化
-#https://qiita.com/itotomball/items/e63039d186fa1f564513
-#接点番号は1から、pythonの行番号は0から始まるので修正
-triangles = eleme -1
-#各メッシュの値。今回はないので0
-C = np.zeros(num_eleme)
-fig = plt.figure(figsize=(8.0,3.0))
-ax = fig.add_subplot()
-fig.suptitle("input mesh")
-#cmapについてはこちら
-#https://beiznotes.org/matplot-cmap-list/
-tpc = ax.tripcolor(node[:,0], node[:,1], triangles, C, edgecolors='black', cmap='jet')
-# カラーバーを表示
-fig.colorbar(tpc)
-# アスペクト比を1対1に, レイアウトを調整
-ax.set_aspect('equal')
-fig.tight_layout()
-plt.show()
-#fig.savefig('input_mesh.png')
+
 
 
 
@@ -391,16 +373,7 @@ print("処理時間:", time.time() - lap_time)
 lap_time = time.time()
 
 
-#疎行列の可視化
-fig = plt.figure()
-ax = fig.add_subplot()
-fig.suptitle("Kmat")
-ax.spy(Kmat)
-# アスペクト比を1対1に, レイアウトを調整
-#ax.set_aspect('equal')
-fig.tight_layout()
-plt.show()
-#fig.savefig('Kmat.png')
+
 
 
 
@@ -720,14 +693,11 @@ lap_time = time.time()
 
 
 
-
-
-
 #可視化
 #https://qiita.com/itotomball/items/e63039d186fa1f564513
 
 
-result_list = (('strain_x', strain[0]),('strain_y', strain[1]),('strain_xy', strain[2]),('stress_x', stress[0]),('stress_y', stress[1]),('stress_xy', stress[2]))
+result_list = (('mesh', np.zeros(num_eleme)),('strain_x', strain[0]),('strain_y', strain[1]),('strain_xy', strain[2]),('stress_x', stress[0]),('stress_y', stress[1]),('stress_xy', stress[2]))
 for title, C in result_list:
 
 
@@ -747,7 +717,20 @@ for title, C in result_list:
     plt.show()
     #fig.savefig(f'result_{title}.png')
     
-    
+
+
+
+
+#疎行列の可視化
+fig = plt.figure()
+ax = fig.add_subplot()
+fig.suptitle("Kmat")
+ax.spy(Kmat)
+# アスペクト比を1対1に, レイアウトを調整
+#ax.set_aspect('equal')
+fig.tight_layout()
+plt.show()
+#fig.savefig('Kmat.png')
     
     
     
