@@ -447,8 +447,8 @@ Umat = np.zeros((2*num_node), dtype=np.float64)
 
 
 
-for i in range(num_force):
-    #force_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
+for i in range(num_fix):
+    #fix_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
     #pythonの配列番号0始まりに変更
     Umat[2*(fix_pnt[i,0]-1) + fix_pnt[i,1] -1] = fix[i]
