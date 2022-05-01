@@ -64,7 +64,7 @@ import time
 import sys
 from scipy.sparse import csr_matrix, csc_matrix, coo_matrix, lil_matrix
 from scipy.sparse.linalg import inv, dsolve
-
+from scipy.linalg import solve
 #処理時間計測
 start_time = time.time()
 lap_time = time.time()
@@ -616,13 +616,18 @@ lap_time = time.time()
 #一気に、メモリの節約
 #U1 = K11 @ (F1 - K12 @ U2)
 
-#連立方程式を解く。　早い
+#普通の連立方程式を解く。K11invより速いが、疎行列連立方程式のほうが早い。
+#U1 = solve(K11, F1 - K12 @ U2)
+
+#疎行列連立方程式を解く。　早い
 #http://www.turbare.net/transl/scipy-lecture-notes/advanced/scipy_sparse/solvers.html#sparse-direct-solvers
 #https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
-#sparce@ndarry=ndarray, coo_matrix(1D)=[1,n]の2次元
+#sparce@ndarry=ndarray, coo_matrix(1D)は[1,n]の2次元
 K11 =  coo_matrix(K11).tocsr()
-#うまくndarrayが返ってくる。
+#うまくndarrayが返ってくるが、これは非0が多いから自動的にそうなっているのか？。
+#use_umfpack：倍精度
 U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
+
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
