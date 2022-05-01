@@ -62,8 +62,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 import sys
-
-
+from scipy.sparse import csr_matrix, csc_matrix, coo_matrix, lil_matrix
+from scipy.sparse.linalg import inv, dsolve
+from scipy.linalg import solve
 #処理時間計測
 start_time = time.time()
 lap_time = time.time()
@@ -82,7 +83,8 @@ lap_time = time.time()
 #fortranでは単精度では1.23e4、倍精度では1.23d4とかくが、pythonはeのみ対応。よって置換
 #https://docs.python.org/ja/3/library/functions.html#float
 
-with open('input_AnalysisConditions.txt') as f:
+#with open('input_AnalysisConditions.txt') as f:
+with open('benchmark_input_AnalysisConditions.txt') as f:
     l = f.readlines()
     num_node  = int(l[0].split('!')[0]) #モデル節点数
     num_eleme = int(l[1].split('!')[0]) #モデル要素数
@@ -126,13 +128,15 @@ force     = np.empty((num_force),  dtype=np.float64) #力学的境界条件の�
 
 
 #dを使った指数表現でない？
-with open('input_point.txt') as f:
+#with open('input_point.txt') as f:
+with open('benchmark_input_point.txt') as f:
     l = f.readlines()
     for i, input_point in enumerate(l):
         node[i] = input_point.split(',')[1:3]
         
 
-with open('input_eleme.txt') as f:
+#with open('input_eleme.txt') as f:
+with open('benchmark_input_eleme.txt') as f:
     l = f.readlines()
     for i, input_eleme in enumerate(l):
         eleme[i] = input_eleme.split(',')[1:4]
@@ -334,14 +338,16 @@ Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マト
 e_Kmat = np.zeros((6,6), dtype=np.float64)  #要素剛性マトリックス
 
 #定数になってしまうのでTをtに変更
-BtD    = np.zeros((6,3), dtype=np.float64)  #
-BtDB   = np.zeros((6,6), dtype=np.float64)  #
+#BtD    = np.zeros((6,3), dtype=np.float64)  #fortran二はあったが、確保する必要なし
+#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortran二はあったが、確保する必要なし
 
 for i in range(num_eleme):
     #要素剛性マトリックスの構築 P.135 式(5.94)
-    BtD = np.dot(Bmat[:,:,i].T, Dmat)
-    BtDB = np.dot(BtD, Bmat[:,:,i])
-    e_Kmat = Ae[i] * thickness * BtDB 
+    #BtD = Bmat[:,:,i].T @ Dmat
+    #BtDB = BtD @ Bmat[:,:,i]
+    #e_Kmat = Ae[i] * thickness * BtDB 
+    #一発で、メモリのほんのちょっとの節約
+    e_Kmat = Ae[i] * thickness * Bmat[:,:,i].T @ Dmat @ Bmat[:,:,i]
     
     #全体剛性マトリックスへの組込み P.137 式(5.97)
 
@@ -364,6 +370,10 @@ for i in range(num_eleme):
             #1行でできる
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
+#疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
+#Kmat = lil_matrix(Kmat)
+#Kmat = csr_matrix(Kmat)
+#Kmat = csc_matrix(Kmat)
 
 
 print( 'MAKE K-MATRIX')
@@ -455,6 +465,13 @@ unknown_DOF = np.empty(2*num_node - num_fix, dtype=np.int32) #未知節点変位
 K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
 K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
+
+#疎行列 代入はlil　遅い
+#K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
+#K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
+#K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
+
+
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
 F2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列
 U1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列
@@ -487,8 +504,8 @@ END DO
 DO j=known_DOF(NUM_FIX)+1, 2*NUM_NODE
   unknown_DOF(j-NUM_FIX) = j
 END DO
-
 """
+
 
 num = 0
 for j in range(2*num_node):
@@ -547,12 +564,17 @@ lap_time = time.time()
 
 #test ちゃんと単位行列になるか
 #K11inv = np.linalg.inv(K11)
-#a = np.dot(K11inv, K11)
-
+#a = K11inv @ K11
+#originalK11 = K11.copy()
 
 #K11を上書きして逆行列
-K11 = np.linalg.inv(K11)
+#K11 = np.linalg.inv(K11)
 
+#疎行列
+#普通より遅い
+#invはcsc_matrixを使わないと非効率
+#K11 = csc_matrix(K11)
+#K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
 
@@ -581,15 +603,31 @@ lap_time = time.time()
 
 
 #U1  = np.zeros((2*num_node-num_fix), dtype=np.float64)   #変位境界条件付加後の小行列 #前に作成済み
-fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-Kd) #大文字から小文字に変更
+#fku = np.zeros((2*num_node-num_fix), dtype=np.float64)   #わからない   (F-Kd) #大文字から小文字に変更 いらない
 
 #P.139 式(5.104)
 #一気に計算する
-fku = F1 - np.dot(K12, U2)
+#fku = F1 - K12 @ U2
 
 #K11は逆行列をすでにとっている。
 #U1は未知成分だったが、ここで判明
-U1 = np.dot(K11, fku)
+#U1 = K11 @ fku
+
+#一気に、メモリの節約
+#U1 = K11 @ (F1 - K12 @ U2)
+
+#普通の連立方程式を解く。K11invより速いが、疎行列連立方程式のほうが早い。
+#U1 = solve(K11, F1 - K12 @ U2)
+
+#疎行列連立方程式を解く。　早い
+#http://www.turbare.net/transl/scipy-lecture-notes/advanced/scipy_sparse/solvers.html#sparse-direct-solvers
+#https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
+#sparce@ndarry=ndarray, coo_matrix(1D)は[1,n]の2次元
+K11 =  coo_matrix(K11).tocsr()
+#うまくndarrayが返ってくるが、これは非0が多いから自動的にそうなっているのか？。
+#use_umfpack：倍精度
+U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
+
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
@@ -615,8 +653,7 @@ lap_time = time.time()
 
 #K21=K12.T 対称性より
 #F2は未知成分だったが、ここで判明
-F2 = np.dot(K12.T, U1) + np.dot(K22, U2)
-
+F2 = K12.T @ U1 + K22 @ U2
 
 #もっとパイソニックに書きたい
 #元の並びのUmatに、判明部分を代入
@@ -676,8 +713,8 @@ for i in range(num_eleme):
         e_Umat[2*j]   = Umat[2*(eleme[i,j]-1)]     #三角形要素のx変位
         e_Umat[2*j+1] = Umat[2*(eleme[i,j]-1)+1]   #三角形要素のy変位
 
-    strain[:,i] = np.dot(Bmat[:,:,i], e_Umat)
-    stress[:,i] = np.dot(Dmat, strain[:,i])
+    strain[:,i] = Bmat[:,:,i] @ e_Umat
+    stress[:,i] = Dmat @ strain[:,i]
 
 
 print('CALCULATE DISTRIBUTIONS')
@@ -718,19 +755,17 @@ for title, C in result_list:
     #fig.savefig(f'result_{title}.png')
     
 
-
-
-
-#疎行列の可視化
-fig = plt.figure()
-ax = fig.add_subplot()
-fig.suptitle("Kmat")
-ax.spy(Kmat)
-# アスペクト比を1対1に, レイアウトを調整
-#ax.set_aspect('equal')
-fig.tight_layout()
-plt.show()
-#fig.savefig('Kmat.png')
+for matrix_name in["Kmat", "K11", "K12", "K22"] :
+    #疎行列の可視化
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    fig.suptitle(matrix_name)
+    ax.spy(eval(matrix_name))
+    # アスペクト比を1対1に, レイアウトを調整
+    #ax.set_aspect('equal')
+    fig.tight_layout()
+    plt.show()
+    #fig.savefig('Kmat.png')
     
     
     
@@ -738,9 +773,9 @@ plt.show()
 #http://harmonizedai.com/article/%E5%A4%89%E6%95%B0%E3%81%AE%E3%83%A1%E3%83%A2%E3%83%AA%E5%86%85%E5%AE%B9%E3%82%92%E4%B8%80%E8%A6%A7%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6/
 
 
-print("{}{: >15}{}{: >10}{}".format('|','Variable Name','|','Memory[Byte]','|'))
+print("{}{: >15}{}{: >15}{}".format('|','Variable Name','|','Memory[Byte]','|'))
 print(" ------------------------------------ ")
 for var_name in dir():
     if not var_name.startswith("_"):
-        print("{}{: >15}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
+        print("{}{: >15}{}{: >15}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
 
