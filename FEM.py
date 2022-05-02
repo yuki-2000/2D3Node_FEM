@@ -62,8 +62,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 import sys
-from scipy.sparse import csr_matrix, csc_matrix, coo_matrix, lil_matrix
-from scipy.sparse.linalg import inv, dsolve
+from scipy.sparse import coo_matrix
+from scipy.sparse.linalg import inv, spsolve
 from scipy.linalg import solve
 #処理時間計測
 start_time = time.time()
@@ -338,8 +338,8 @@ Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マト
 e_Kmat = np.zeros((6,6), dtype=np.float64)  #要素剛性マトリックス
 
 #定数になってしまうのでTをtに変更
-#BtD    = np.zeros((6,3), dtype=np.float64)  #fortran二はあったが、確保する必要なし
-#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortran二はあったが、確保する必要なし
+#BtD    = np.zeros((6,3), dtype=np.float64)  #fortranにはあったが、確保する必要なし
+#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortranにはあったが、確保する必要なし
 
 for i in range(num_eleme):
     #要素剛性マトリックスの構築 P.135 式(5.94)
@@ -371,9 +371,9 @@ for i in range(num_eleme):
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
 #疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
-#Kmat = lil_matrix(Kmat)
-#Kmat = csr_matrix(Kmat)
-#Kmat = csc_matrix(Kmat)
+#Kmat = coo_matrix(Kmat).tolil()
+Kmat = coo_matrix(Kmat).tocsr()
+#Kmat = coo_matrix(Kmat).tocsc()
 
 
 print( 'MAKE K-MATRIX')
@@ -464,11 +464,6 @@ K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変�
 K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 
-#疎行列 代入はlil　遅い
-#K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-#K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-#K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
-
 
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
 F2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列
@@ -555,7 +550,9 @@ lap_time = time.time()
 
 # makeInverse (NUM_NODE, NUM_FIX, K11)
 
+#solveUmatで連立方程式を直接解くので必要なしになった
 # 逆行列のアルゴリズムがわからない。
+
 
 #test ちゃんと単位行列になるか
 #K11inv = np.linalg.inv(K11)
@@ -568,7 +565,7 @@ lap_time = time.time()
 #疎行列
 #普通より遅い
 #invはcsc_matrixを使わないと非効率
-#K11 = csc_matrix(K11)
+#K11 = coo_matrix(K11).tocsc()
 #K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
@@ -619,9 +616,9 @@ lap_time = time.time()
 #https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
 #sparce@ndarry=ndarray, coo_matrix(1D)は[1,n]の2次元
 K11 =  coo_matrix(K11).tocsr()
-#うまくndarrayが返ってくるが、これは非0が多いから自動的にそうなっているのか？。
+#https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
 #use_umfpack：倍精度
-U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
+U1 = spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
 
 
 
@@ -719,7 +716,7 @@ lap_time = time.time()
 
 
 
-
+"""
 
 #可視化
 #https://qiita.com/itotomball/items/e63039d186fa1f564513
@@ -765,8 +762,9 @@ for matrix_name in["Kmat", "K11", "K12", "K22"] :
 
 
 print("{}{: >15}{}{: >15}{}".format('|','Variable Name','|','Memory[Byte]','|'))
-print(" ------------------------------------ ")
+print("|---------------|---------------|")
 for var_name in dir():
     if not var_name.startswith("_"):
         print("{}{: >15}{}{: >15}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
 
+"""
