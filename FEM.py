@@ -62,8 +62,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 import sys
-from scipy.sparse import csr_matrix, csc_matrix, coo_matrix, lil_matrix
-from scipy.sparse.linalg import inv, dsolve
+from scipy.sparse import coo_matrix
+from scipy.sparse.linalg import inv, spsolve
 from scipy.linalg import solve
 #処理時間計測
 start_time = time.time()
@@ -264,14 +264,6 @@ e_node = np.empty((3,2), dtype=np.float64) #不明　ある三角形elementを�
 #配列0始まりに変更
 #eleme[i,j]は接点番号であり、pythonにおける配列位置にするためには-1する必要あり
 #enodeは要素を構成する接点の座標
-for i in range(num_eleme):
-    for j in range(3):
-        e_node[j,0] = node[eleme[i,j]-1,0]
-        e_node[j,1] = node[eleme[i,j]-1,1]
-    
-    #P.102 式(5.19)
-    Ae[i] = 0.5 * ((e_node[0,0] * (e_node[1,1] - e_node[2,1])) + (e_node[1,0] * (e_node[2,1] - e_node[0,1]))  + (e_node[2,0] * (e_node[0,1] - e_node[1,1])))
-
 
 #各要素のB-matrixを求める
 #配列0始まりに変更
@@ -281,7 +273,8 @@ for i in range(num_eleme):
         e_node[j,0] = node[eleme[i,j]-1,0]
         e_node[j,1] = node[eleme[i,j]-1,1]
 
-
+    #P.102 式(5.19)
+    Ae[i] = 0.5 * ((e_node[0,0] * (e_node[1,1] - e_node[2,1])) + (e_node[1,0] * (e_node[2,1] - e_node[0,1]))  + (e_node[2,0] * (e_node[0,1] - e_node[1,1])))
 
 
     #P.129 式(5.77)
@@ -338,8 +331,8 @@ Kmat   = np.zeros((2*num_node,2*num_node), dtype=np.float64) #全体剛性マト
 e_Kmat = np.zeros((6,6), dtype=np.float64)  #要素剛性マトリックス
 
 #定数になってしまうのでTをtに変更
-#BtD    = np.zeros((6,3), dtype=np.float64)  #fortran二はあったが、確保する必要なし
-#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortran二はあったが、確保する必要なし
+#BtD    = np.zeros((6,3), dtype=np.float64)  #fortranにはあったが、確保する必要なし
+#BtDB   = np.zeros((6,6), dtype=np.float64)  #fortranにはあったが、確保する必要なし
 
 for i in range(num_eleme):
     #要素剛性マトリックスの構築 P.135 式(5.94)
@@ -370,10 +363,10 @@ for i in range(num_eleme):
             #1行でできる
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
-#疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
-#Kmat = lil_matrix(Kmat)
-#Kmat = csr_matrix(Kmat)
-#Kmat = csc_matrix(Kmat)
+#疎行列に変換
+#Kmat = coo_matrix(Kmat).tolil()
+Kmat = coo_matrix(Kmat).tocsr()
+#Kmat = coo_matrix(Kmat).tocsc()
 
 
 print( 'MAKE K-MATRIX')
@@ -388,13 +381,11 @@ lap_time = time.time()
 
 
 
-
 # makeFmat (NUM_NODE, NUM_FORCE, Fmat, force_pnt, force)
-
 
 Fmat = np.zeros((2*num_node), dtype=np.float64) #節点荷重ベクトル
 
-
+#unknown_DOFをつかってファンシーインデックスにしたほうが早い
 for i in range(num_force):
     #force_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
@@ -429,7 +420,7 @@ for i in range(num_force):
 Umat = np.zeros((2*num_node), dtype=np.float64)
 
 
-
+#known_DOFをつかってファンシーインデックスにしたほうが早い
 for i in range(num_fix):
     #fix_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
@@ -466,11 +457,6 @@ K11 = np.zeros((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変�
 K12 = np.zeros((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
 K22 = np.zeros((num_fix, num_fix), dtype=np.float64)                       #変位境界条件付加後の小行列
 
-#疎行列 代入はlil　遅い
-#K11 = lil_matrix((2*num_node-num_fix, 2*num_node-num_fix), dtype=np.float64) #変位境界条件付加後の小行列
-#K12 = lil_matrix((2*num_node-num_fix, num_fix), dtype=np.float64)            #変位境界条件付加後の小行列 #K21の転置
-#K22 = lil_matrix((num_fix, num_fix), dtype=np.float64)  
-
 
 F1  = np.zeros((2*num_node-num_fix), dtype=np.float64)                     #変位境界条件付加後の小行列 #与えられる
 F2  = np.zeros(num_fix, dtype=np.float64)                                  #変位境界条件付加後の小行列
@@ -482,9 +468,7 @@ U2  = np.zeros(num_fix, dtype=np.float64)                                  #変�
 ##既知接点変位の行番号配列作成
 #pythonの配列番号0始まりに変更
 #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
-for i in range(num_fix):
-    known_DOF[i] = 2*(fix_pnt[i,0]-1) + fix_pnt[i,1] -1
-
+known_DOF = 2*(fix_pnt[:,0]-1) + fix_pnt[:,1] -1
 
 
 """
@@ -507,30 +491,30 @@ END DO
 """
 
 
-num = 0
-for j in range(2*num_node):
-    if j not in known_DOF:
-        unknown_DOF[num] = j
-        num += 1
+#すべての行番号の中から、known_DOFの行番号のインデックスを削除
+#unknown_DOFのインデックスと値が一致しているためこう書くが、本質はknown_DOFの行番号の値を削除。
+unknown_DOF = np.array(range(2*num_node))
+unknown_DOF = np.delete(unknown_DOF, known_DOF)
         
 
-#行列の変形、線形代数を復習したほうが良さそう
-for i in range(2*num_node-num_fix):
-    for j in range(2*num_node-num_fix):
-        K11[i,j] = Kmat[unknown_DOF[i], unknown_DOF[j]]
-    for j in range(num_fix):
-        K12[i,j] = Kmat[unknown_DOF[i], known_DOF[j]]
-        
-    F1[i] = Fmat[unknown_DOF[i]]
-    U1[i] = Umat[unknown_DOF[i]] #未知成分
+#zerosで作ったものを上書きしている？
+#ファンシーインデックスはビュー（参照）ではなくコピーを返す。
+K11 = Kmat[unknown_DOF, :]
+K11 = K11[:, unknown_DOF]
+K12 = Kmat[unknown_DOF, :]
+K12 = K12[:, known_DOF]
+
+#ファインシーインデックスはviewでなくcopyを返す        
+F1 = Fmat[unknown_DOF]
+U1 = Umat[unknown_DOF] #未知成分
 
 
-for i in range(num_fix):
-    for j in range(num_fix):
-        K22[i,j] = Kmat[known_DOF[i], known_DOF[j]]
-        
-    F2[i] = Fmat[known_DOF[i]] #未知成分
-    U2[i] = Umat[known_DOF[i]] 
+K22 = Kmat[known_DOF, :]
+K22 = K22[:, known_DOF]
+
+#ファインシーインデックスはviewでなくcopyを返す              
+F2 = Fmat[known_DOF] #未知成分
+U2 = Umat[known_DOF] 
 
 
 
@@ -557,10 +541,11 @@ lap_time = time.time()
 
 
 
-
 # makeInverse (NUM_NODE, NUM_FIX, K11)
 
+#solveUmatで連立方程式を直接解くので必要なしになった
 # 逆行列のアルゴリズムがわからない。
+
 
 #test ちゃんと単位行列になるか
 #K11inv = np.linalg.inv(K11)
@@ -573,7 +558,7 @@ lap_time = time.time()
 #疎行列
 #普通より遅い
 #invはcsc_matrixを使わないと非効率
-#K11 = csc_matrix(K11)
+#K11 = coo_matrix(K11).tocsc()
 #K11 = inv(K11)
 
 print('MAKE K11-INV-MATRIX')
@@ -624,17 +609,15 @@ lap_time = time.time()
 #https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
 #sparce@ndarry=ndarray, coo_matrix(1D)は[1,n]の2次元
 K11 =  coo_matrix(K11).tocsr()
-#うまくndarrayが返ってくるが、これは非0が多いから自動的にそうなっているのか？。
+#https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html#scipy.sparse.linalg.spsolve
 #use_umfpack：倍精度
-U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
+U1 = spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
 
 
-#もっとパイソニックに書きたい
+
 #元の並びのUmatに、判明部分を代入
-for i in range(2*num_node-num_fix):
-    Umat[unknown_DOF[i]] = U1[i]
-
-
+#view? copy?
+Umat[unknown_DOF] = U1
 
 #output省略
 
@@ -655,10 +638,10 @@ lap_time = time.time()
 #F2は未知成分だったが、ここで判明
 F2 = K12.T @ U1 + K22 @ U2
 
-#もっとパイソニックに書きたい
-#元の並びのUmatに、判明部分を代入
-for i in range(num_fix):
-    Fmat[known_DOF[i]] = F2[i]
+
+#元の並びのUmatに、判明部分を代入  
+#view? copy?
+Fmat[known_DOF] = F2
 
 #output省略
 
@@ -678,10 +661,8 @@ lap_time = time.time()
 disp = np.zeros((num_node, 2), dtype=np.float64)  #amp倍した変位後の座標
 
 
-#もう少しうまく書きたい
-for i in range(num_node):
-    disp[i,0] = node[i,0] + Umat[2*i] * amp
-    disp[i,1] = node[i,1] + Umat[2*i+1] * amp
+disp[:,0] = node[:,0] + Umat[0::2] * amp
+disp[:,1] = node[:,1] + Umat[1::2] * amp
 
 #output省略
 
@@ -774,7 +755,7 @@ for matrix_name in["Kmat", "K11", "K12", "K22"] :
 
 
 print("{}{: >15}{}{: >15}{}".format('|','Variable Name','|','Memory[Byte]','|'))
-print(" ------------------------------------ ")
+print("|---------------|---------------|")
 for var_name in dir():
     if not var_name.startswith("_"):
         print("{}{: >15}{}{: >15}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
