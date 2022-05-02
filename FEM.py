@@ -83,8 +83,8 @@ lap_time = time.time()
 #fortranでは単精度では1.23e4、倍精度では1.23d4とかくが、pythonはeのみ対応。よって置換
 #https://docs.python.org/ja/3/library/functions.html#float
 
-with open('input_AnalysisConditions.txt') as f:
-#with open('benchmark_input_AnalysisConditions.txt') as f:
+#with open('input_AnalysisConditions.txt') as f:
+with open('benchmark_input_AnalysisConditions.txt') as f:
     l = f.readlines()
     num_node  = int(l[0].split('!')[0]) #モデル節点数
     num_eleme = int(l[1].split('!')[0]) #モデル要素数
@@ -128,15 +128,15 @@ force     = np.empty((num_force),  dtype=np.float64) #力学的境界条件の�
 
 
 #dを使った指数表現でない？
-with open('input_point.txt') as f:
-#with open('benchmark_input_point.txt') as f:
+#with open('input_point.txt') as f:
+with open('benchmark_input_point.txt') as f:
     l = f.readlines()
     for i, input_point in enumerate(l):
         node[i] = input_point.split(',')[1:3]
         
 
-with open('input_eleme.txt') as f:
-#with open('benchmark_input_eleme.txt') as f:
+#with open('input_eleme.txt') as f:
+with open('benchmark_input_eleme.txt') as f:
     l = f.readlines()
     for i, input_eleme in enumerate(l):
         eleme[i] = input_eleme.split(',')[1:4]
@@ -388,13 +388,11 @@ lap_time = time.time()
 
 
 
-
 # makeFmat (NUM_NODE, NUM_FORCE, Fmat, force_pnt, force)
-
 
 Fmat = np.zeros((2*num_node), dtype=np.float64) #節点荷重ベクトル
 
-
+#unknown_DOFをつかってファンシーインデックスにしたほうが早い
 for i in range(num_force):
     #force_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
@@ -429,7 +427,7 @@ for i in range(num_force):
 Umat = np.zeros((2*num_node), dtype=np.float64)
 
 
-
+#known_DOFをつかってファンシーインデックスにしたほうが早い
 for i in range(num_fix):
     #fix_pnt[i,1]は接点番号であり、pythonにおける配列位置にするために変更、
     #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
@@ -511,21 +509,20 @@ unknown_DOF = np.array(range(2*num_node))
 unknown_DOF = np.delete(unknown_DOF, known_DOF)
         
 
-#行列の変形、線形代数を復習したほうが良さそう
-for i in range(2*num_node-num_fix):
-    for j in range(2*num_node-num_fix):
-        K11[i,j] = Kmat[unknown_DOF[i], unknown_DOF[j]]
-    for j in range(num_fix):
-        K12[i,j] = Kmat[unknown_DOF[i], known_DOF[j]]
+#zerosで作ったものを上書きしている？
+#ファンシーインデックスはビュー（参照）ではなくコピーを返す。
+K11 = Kmat[unknown_DOF, :]
+K11 = K11[:, unknown_DOF]
+K12 = Kmat[unknown_DOF, :]
+K12 = K12[:, known_DOF]
 
 #ファインシーインデックスはviewでなくcopyを返す        
 F1 = Fmat[unknown_DOF]
 U1 = Umat[unknown_DOF] #未知成分
 
 
-for i in range(num_fix):
-    for j in range(num_fix):
-        K22[i,j] = Kmat[known_DOF[i], known_DOF[j]]
+K22 = Kmat[known_DOF, :]
+K22 = K22[:, known_DOF]
 
 #ファインシーインデックスはviewでなくcopyを返す              
 F2 = Fmat[known_DOF] #未知成分
@@ -539,7 +536,6 @@ print('MAKE SUB-MATRIX')
 print("経過時間:", time.time() - start_time)
 print("処理時間:", time.time() - lap_time)
 lap_time = time.time()
-
 
 
 
