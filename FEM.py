@@ -83,8 +83,8 @@ lap_time = time.time()
 #fortranでは単精度では1.23e4、倍精度では1.23d4とかくが、pythonはeのみ対応。よって置換
 #https://docs.python.org/ja/3/library/functions.html#float
 
-#with open('input_AnalysisConditions.txt') as f:
-with open('benchmark_input_AnalysisConditions.txt') as f:
+with open('input_AnalysisConditions.txt') as f:
+#with open('benchmark_input_AnalysisConditions.txt') as f:
     l = f.readlines()
     num_node  = int(l[0].split('!')[0]) #モデル節点数
     num_eleme = int(l[1].split('!')[0]) #モデル要素数
@@ -128,15 +128,15 @@ force     = np.empty((num_force),  dtype=np.float64) #力学的境界条件の�
 
 
 #dを使った指数表現でない？
-#with open('input_point.txt') as f:
-with open('benchmark_input_point.txt') as f:
+with open('input_point.txt') as f:
+#with open('benchmark_input_point.txt') as f:
     l = f.readlines()
     for i, input_point in enumerate(l):
         node[i] = input_point.split(',')[1:3]
         
 
-#with open('input_eleme.txt') as f:
-with open('benchmark_input_eleme.txt') as f:
+with open('input_eleme.txt') as f:
+#with open('benchmark_input_eleme.txt') as f:
     l = f.readlines()
     for i, input_eleme in enumerate(l):
         eleme[i] = input_eleme.split(',')[1:4]
@@ -482,9 +482,7 @@ U2  = np.zeros(num_fix, dtype=np.float64)                                  #変�
 ##既知接点変位の行番号配列作成
 #pythonの配列番号0始まりに変更
 #各接点のx,yの順に配列が並んでいるので、xは+1、yは+2が割り振られうまく位置を計算している。
-for i in range(num_fix):
-    known_DOF[i] = 2*(fix_pnt[i,0]-1) + fix_pnt[i,1] -1
-
+known_DOF = 2*(fix_pnt[:,0]-1) + fix_pnt[:,1] -1
 
 
 """
@@ -507,11 +505,10 @@ END DO
 """
 
 
-num = 0
-for j in range(2*num_node):
-    if j not in known_DOF:
-        unknown_DOF[num] = j
-        num += 1
+#すべての行番号の中から、known_DOFの行番号のインデックスを削除
+#unknown_DOFのインデックスと値が一致しているためこう書くが、本質はknown_DOFの行番号の値を削除。
+unknown_DOF = np.array(range(2*num_node))
+unknown_DOF = np.delete(unknown_DOF, known_DOF)
         
 
 #行列の変形、線形代数を復習したほうが良さそう
@@ -520,17 +517,19 @@ for i in range(2*num_node-num_fix):
         K11[i,j] = Kmat[unknown_DOF[i], unknown_DOF[j]]
     for j in range(num_fix):
         K12[i,j] = Kmat[unknown_DOF[i], known_DOF[j]]
-        
-    F1[i] = Fmat[unknown_DOF[i]]
-    U1[i] = Umat[unknown_DOF[i]] #未知成分
+
+#ファインシーインデックスはviewでなくcopyを返す        
+F1 = Fmat[unknown_DOF]
+U1 = Umat[unknown_DOF] #未知成分
 
 
 for i in range(num_fix):
     for j in range(num_fix):
         K22[i,j] = Kmat[known_DOF[i], known_DOF[j]]
-        
-    F2[i] = Fmat[known_DOF[i]] #未知成分
-    U2[i] = Umat[known_DOF[i]] 
+
+#ファインシーインデックスはviewでなくcopyを返す              
+F2 = Fmat[known_DOF] #未知成分
+U2 = Umat[known_DOF] 
 
 
 
@@ -629,12 +628,10 @@ K11 =  coo_matrix(K11).tocsr()
 U1 = dsolve.spsolve(K11, F1 - K12 @ U2, use_umfpack=True)
 
 
-#もっとパイソニックに書きたい
+
 #元の並びのUmatに、判明部分を代入
-for i in range(2*num_node-num_fix):
-    Umat[unknown_DOF[i]] = U1[i]
-
-
+#view? copy?
+Umat[unknown_DOF] = U1
 
 #output省略
 
@@ -655,10 +652,10 @@ lap_time = time.time()
 #F2は未知成分だったが、ここで判明
 F2 = K12.T @ U1 + K22 @ U2
 
-#もっとパイソニックに書きたい
-#元の並びのUmatに、判明部分を代入
-for i in range(num_fix):
-    Fmat[known_DOF[i]] = F2[i]
+
+#元の並びのUmatに、判明部分を代入  
+#view? copy?
+Fmat[known_DOF] = F2
 
 #output省略
 
@@ -678,10 +675,8 @@ lap_time = time.time()
 disp = np.zeros((num_node, 2), dtype=np.float64)  #amp倍した変位後の座標
 
 
-#もう少しうまく書きたい
-for i in range(num_node):
-    disp[i,0] = node[i,0] + Umat[2*i] * amp
-    disp[i,1] = node[i,1] + Umat[2*i+1] * amp
+disp[:,0] = node[:,0] + Umat[0::2] * amp
+disp[:,1] = node[:,1] + Umat[1::2] * amp
 
 #output省略
 
