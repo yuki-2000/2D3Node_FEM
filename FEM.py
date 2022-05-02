@@ -264,14 +264,6 @@ e_node = np.empty((3,2), dtype=np.float64) #不明　ある三角形elementを�
 #配列0始まりに変更
 #eleme[i,j]は接点番号であり、pythonにおける配列位置にするためには-1する必要あり
 #enodeは要素を構成する接点の座標
-for i in range(num_eleme):
-    for j in range(3):
-        e_node[j,0] = node[eleme[i,j]-1,0]
-        e_node[j,1] = node[eleme[i,j]-1,1]
-    
-    #P.102 式(5.19)
-    Ae[i] = 0.5 * ((e_node[0,0] * (e_node[1,1] - e_node[2,1])) + (e_node[1,0] * (e_node[2,1] - e_node[0,1]))  + (e_node[2,0] * (e_node[0,1] - e_node[1,1])))
-
 
 #各要素のB-matrixを求める
 #配列0始まりに変更
@@ -281,7 +273,8 @@ for i in range(num_eleme):
         e_node[j,0] = node[eleme[i,j]-1,0]
         e_node[j,1] = node[eleme[i,j]-1,1]
 
-
+    #P.102 式(5.19)
+    Ae[i] = 0.5 * ((e_node[0,0] * (e_node[1,1] - e_node[2,1])) + (e_node[1,0] * (e_node[2,1] - e_node[0,1]))  + (e_node[2,0] * (e_node[0,1] - e_node[1,1])))
 
 
     #P.129 式(5.77)
