@@ -363,7 +363,7 @@ for i in range(num_eleme):
             #1行でできる
             Kmat[2*(pt1-1):2*(pt1-1)+2, 2*(pt2-1):2*(pt2-1)+2] += e_Kmat[2*j:2*j+2, 2*k:2*k+2]
 
-#疎行列に変換、時間かかるがメモリ大幅減、後で小行列を作るとアクセスに時間がかかる
+#疎行列に変換
 #Kmat = coo_matrix(Kmat).tolil()
 Kmat = coo_matrix(Kmat).tocsr()
 #Kmat = coo_matrix(Kmat).tocsc()
@@ -709,7 +709,7 @@ lap_time = time.time()
 
 
 
-"""
+
 
 #可視化
 #https://qiita.com/itotomball/items/e63039d186fa1f564513
@@ -760,4 +760,3 @@ for var_name in dir():
     if not var_name.startswith("_"):
         print("{}{: >15}{}{: >15}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
 
-"""
