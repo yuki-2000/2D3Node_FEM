@@ -83,8 +83,8 @@ lap_time = time.time()
 #fortranでは単精度では1.23e4、倍精度では1.23d4とかくが、pythonはeのみ対応。よって置換
 #https://docs.python.org/ja/3/library/functions.html#float
 
-#with open('input_AnalysisConditions.txt') as f:
-with open('benchmark_input_AnalysisConditions.txt') as f:
+with open('input_AnalysisConditions.txt') as f:
+#with open('benchmark_input_AnalysisConditions.txt') as f:
     l = f.readlines()
     num_node  = int(l[0].split('!')[0]) #モデル節点数
     num_eleme = int(l[1].split('!')[0]) #モデル要素数
@@ -128,15 +128,15 @@ force     = np.empty((num_force),  dtype=np.float64) #力学的境界条件の�
 
 
 #dを使った指数表現でない？
-#with open('input_point.txt') as f:
-with open('benchmark_input_point.txt') as f:
+with open('input_point.txt') as f:
+#with open('benchmark_input_point.txt') as f:
     l = f.readlines()
     for i, input_point in enumerate(l):
         node[i] = input_point.split(',')[1:3]
         
 
-#with open('input_eleme.txt') as f:
-with open('benchmark_input_eleme.txt') as f:
+with open('input_eleme.txt') as f:
+#with open('benchmark_input_eleme.txt') as f:
     l = f.readlines()
     for i, input_eleme in enumerate(l):
         eleme[i] = input_eleme.split(',')[1:4]

@@ -1,11 +1,19 @@
 # Basic_2D3Node_FEM
  Pythonで書かれたFEMプログラム
 
+![image](https://user-images.githubusercontent.com/88224293/167408143-721c6b1c-c46d-4450-bb5d-ee93068fa482.png)
+
+
+# 使用禁止
+プログラムに誤りがあるので、v.1.0.1以降を使うこと
 
 # Version1.0.0 概要
 
 最初のバージョンです。
 基本的には元となった`2D-CST_v1-1.F90`ファイルをpythonに移行したものです。
+
+#わかりやすい解説ページ
+https://www.fem-vandv.net/c4.html
 
 ## 追加点
 メッシュの可視化機能
@@ -24,6 +32,9 @@ smartGRAPHなどの可視化ソフトで別で行うかもしれないので、�
 初期化が簡単
 変数を何度も書かなくてもよい
 計算時に型を考えなくて良い
+Spyderなどを使えば変数の中身が簡単に見える
+可視化が簡単
+疎行列を簡単に使える
 
 ## FortranからPythonへの移行時の注意
 Fortranのコメントアウトは`!`
@@ -335,6 +346,11 @@ v_205\\
 =\begin{Bmatrix} 0 \\ \vdots \\ F_{x200} \\  F_{y200} \\  \vdots \\ 0  \end{Bmatrix}
 \end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_11++%26+k_12+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_21++%26+k_22++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_200+%5C%5C%0Av_200%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_13++%26+k_14+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_23++%26+k_24++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_204+%5C%5C%0Av_204%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_15++%26+k_16+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_25++%26+k_26++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_205+%5C%5C%0Av_205%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+0+%5C%5C+%5Cvdots+%5C%5C+F_%7Bx200%7D+%5C%5C++F_%7By200%7D+%5C%5C++%5Cvdots+%5C%5C+0++%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
 
+
+
+![image](https://user-images.githubusercontent.com/88224293/166187965-1fadcc7d-c1e1-4a28-9397-f99950f33819.png)
+>https://qiita.com/damyarou/items/8ca3432f9bba20a1f5ea
+
 これらの式がほかの要素でも成り立ち、重複する節点の要素については和をとればよい。
 このようにして全体剛性マトリクスに入れていく。
 
@@ -389,7 +405,17 @@ K_21 & K_22
 =\begin{Bmatrix} F_{1known} \\  F_{2unknown} \end{Bmatrix}
 \end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0AK_11+%26+K_12++%5C%5C%0AK_21+%26+K_22+%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+d_%7B1unknown%7D+%5C%5C+d_%7B2known%7D+%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+F_%7B1known%7D+%5C%5C++F_%7B2unknown%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
 
-勉強中
+
+
+Ax=bに関して、xのi行をj行に入れ替えたとすると、Aのうち関係するi列をj列に入れ替える必要がある。
+さらに、bも同時にi行をj行に入れ替えるから、それに伴ってAのうち関係するi行をj行に入れ替える必要がある。
+
+
+## プログラム解説
+`known_DOF`、`unknownDOF`がそれぞれ変位のわかっている節点行番号、わかっていない節点行番号を表している。
+
+
+
 
 
 ##  makeInverse
@@ -479,4 +505,302 @@ https://qiita.com/itotomball/items/e63039d186fa1f564513
 
 
 
+# Version1.0.1 概要
 
+`Version1.0.0`はバグがあったため使用禁止
+
+## 変更点
+Umatにおけるバグ修正
+メモリ量を表示するように変更
+実行時間を出力するように変更
+plot部分をプログラム最後にすべて変更
+
+
+
+## What's Changed
+* Develop by @yuki-2000 in https://github.com/yuki-2000/Basic_2D3Node_FEM/pull/3
+
+## New Contributors
+* @yuki-2000 made their first contribution in https://github.com/yuki-2000/Basic_2D3Node_FEM/pull/3
+
+**Full Changelog**: https://github.com/yuki-2000/Basic_2D3Node_FEM/compare/v1.0.0...v1.0.1
+
+
+
+
+
+
+# Version1.1.0 概要
+疎行列計算に対応
+K11の逆行列は求めずに直接連立方程式を解いてしまう。
+
+#1 
+
+
+## What's Changed
+* Use sparse matrix by @yuki-2000 in https://github.com/yuki-2000/Basic_2D3Node_FEM/pull/4
+
+
+**Full Changelog**: https://github.com/yuki-2000/Basic_2D3Node_FEM/compare/v1.0.1...v1.1.0
+
+
+# 疎行列を使用するように変更
+
+詳細　#1
+
+## 疎行列について
+`scipy.sparse`を使用した。
+K11invを求めるのをやめ、K11を疎行列に変換して連立方程式を直接解くように変更
+
+### 結論
+現時点でのプログラムにおいて、疎行列が有効なのは連立方程式を解くsolveUmatのときだけである。
+特に、makeSUBmatrixについてはforループで個々の要素を見ていくため、見られる側、代入される側どちらに疎行列lilを使用しても遅くなる。
+ここについてはもっと線形代数的な交換をすることでforループを減らし、高速化が期待できる。
+メモリの使用量について、要素数10000ほどのこのプログラムではKmat、K11が1GByte使用しているため、大幅な削減が見込まれるが、それよりも実行速度が長くなるほうが影響が大きい。
+
+## その他の変更点について
+### 行列積
+行列積について、dot()はsparseに対応していないので、ndarryとsparseともに対応している`@`を使用して演算することにした。
+855164013048d858182fd29bac074871f992f2b6
+d74acd2d39046c776e2a8a496943224dc07b3233
+https://qiita.com/yuki_2020/items/2458fc2ad46de23b0995
+
+### ベンチマーク
+デフォルトのモデルは要素数が少ないため、FreeFEMで作成した要素数10000ほどのモデルを使用するようにした。
+18970ef2a3b78737115bbd0c27cd9037b30d22b2
+
+### 中間変数を削除
+行列演算が1行でできるのに、fortranでの可読性のために複数行になっていたものを1行に
+1d25787922c9db014c8c673dd7bec186317d2eb2
+
+###  疎行列の可視化
+Kmatだけでなく、ほかの行列も可視化するように変更
+
+
+
+
+
+
+ 
+
+
+## 速度変化
+K11の疎行列をとらない分早くなり、solveUmatは20倍にはなったが、元が早いので問題なし。
+
+|オリジナル(v1.0.1)|　疎行列(v1.1.0)　|
+-- | --
+Finish   reading input text | Finish   reading input text
+経過時間:   0.02302098274230957 | 経過時間:   0.02202892303466797
+処理時間:   0.02302098274230957 | 処理時間:   0.02202892303466797
+YOUNGS   MODULUS [Pa] : 100000000000.0 | YOUNGS   MODULUS [Pa] : 100000000000.0
+POISSONS   RATIO : 0.3 | POISSONS   RATIO : 0.3
+MAKE   D-MATRIX | MAKE   D-MATRIX
+経過時間:   0.02402353286743164 | 経過時間:   0.02202892303466797
+処理時間:   0.0010025501251220703 | 処理時間:   0.0010008811950683594
+MAKE   B-MATRIX | MAKE   B-MATRIX
+経過時間:   0.2402188777923584 | 経過時間:   0.24022746086120605
+処理時間:   0.21619534492492676 | 処理時間:   0.21719765663146973
+MAKE   K-MATRIX | MAKE   K-MATRIX
+経過時間:   0.8447692394256592 | 経過時間:   0.945798397064209
+処理時間:   0.6045503616333008 | 処理時間:   0.7055709362030029
+MAKE   SUB-MATRIX | MAKE   SUB-MATRIX
+経過時間:   72.64510846138 | 経過時間:   74.43765878677368
+処理時間:   71.80033922195435 | 処理時間:   73.49186038970947
+MAKE   K11-INV-MATRIX | MAKE   K11-INV-MATRIX
+経過時間:   87.81413722038269 | 経過時間:   74.55477452278137
+処理時間:   15.169028759002686 | 処理時間:   0.11711573600769043
+SOLVE   U-MATRIX | SOLVE   U-MATRIX
+経過時間:   87.8561749458313 | 経過時間:   75.41254615783691
+処理時間:   0.0420377254486084 | 処理時間:   0.857771635055542
+SOLVE   F-MATRIX | SOLVE   F-MATRIX
+経過時間:   87.8561749458313 | 経過時間:   75.41354703903198
+処理時間:   0.0 | 処理時間:   0.0
+CALCULATE   DISPLACEMENT | CALCULATE   DISPLACEMENT
+経過時間:   87.864182472229 | 経過時間:   75.42055320739746
+処理時間:   0.008007526397705078 | 処理時間:   0.007006168365478516
+CALCULATE   DISTRIBUTIONS | CALCULATE   DISTRIBUTIONS
+経過時間:   87.99129819869995 | 経過時間:   75.5306625366211
+処理時間:   0.12711572647094727 | 処理時間:   0.11010932922363281
+
+
+
+
+
+## メモリ使用量
+
+コード変更につき、増分、減分はオリジナルと一緒になるように削除等。
+
+
+Variable   Name | オリジナル(v1.0.1)[Byte] | 疎行列(v1.1.0)[Byte]
+-- | -- | --
+Ae | 87960 | 87960
+Bmat | 1581544 | 1581544
+BtD | 264 |  
+BtDB | 408 |  
+C | 104 | 104
+Dmat | 192 | 192
+F1 | 94024 | 94024
+F2 | 184 | 184
+Fmat | 94104 | 94104
+K11 | 1102620920 | 48
+K12 | 939320 | 939320
+K22 | 920 | 920
+Kmat | 1104500120 | 1104500120
+Poisson | 24 | 24
+U1 | 94024 | 104
+U2 | 184 | 184
+Umat | 94104 | 94104
+Young | 24 | 24
+amp | 24 | 24
+ax | 48 | 48
+disp | 94120 | 94120
+e_Kmat | 408 | 72
+e_Umat | 152 | 408
+e_node | 168 | 152
+eleme | 131904 | 168
+f | 208 | 131904
+fig | 48 | 208
+fix | 184 | 48
+fix_pnt | 200 | 184
+fku | 94024 | 200
+force | 144 | 144
+force_pnt | 160 | 160
+i | 28 | 28
+input_eleme | 70 | 70
+input_point | 64 | 64
+j | 28 | 28
+k | 28 | 28
+known_DOF | 144 | 144
+l | 120 | 120
+lap_time | 24 | 24
+node | 94120 | 94120
+np | 72 | 72
+num | 28 | 28
+num_eleme | 28 | 28
+num_fix | 28 | 28
+num_force | 28 | 28
+num_node | 28 | 28
+plt | 72 | 72
+pt1 | 28 | 28
+pt2 | 28 | 28
+result_list | 96 | 96
+start_time | 24 | 24
+strain | 263688 | 263688
+stress | 263688 | 263688
+sys | 72 | 72
+thickness | 24 | 24
+time | 72 | 72
+title | 58 | 58
+tpc | 48 | 48
+triangles | 131904 | 131904
+unknown_DOF | 47064 | 47064
+
+
+
+
+
+
+
+
+
+# Version1.2.0  アルゴリズム変更による大幅高速化
+
+## What's Changed
+* Change ndarray algorithm by @yuki-2000 in https://github.com/yuki-2000/Basic_2D3Node_FEM/pull/7
+
+
+**Full Changelog**: https://github.com/yuki-2000/Basic_2D3Node_FEM/compare/v1.1.0...v1.2.0
+
+
+
+# 変更点
+
+## ndarrayのスライス、ファンシーインデックス
+
+https://note.nkmk.me/python-numpy-ndarray-slice/
+https://note.nkmk.me/python-numpy-fancy-indexing/
+
+`for`をなるべく減らしてスライス、ファンシーインデックスを使用することで、特に`makeDUBmatrix`で大幅高速化
+
+## `unknown_DOF`の作り方変更
+`unknown_DOF`の作り方が、今まではif `known_DOF`にない→代入　だったが、
+すべての行番号の中から、`known_DOF`の行番号のインデックスを削除する方法に変更
+unknown_DOFのインデックスと値が一致しているためこう書くが、本質はknown_DOFの行番号の値を削除。
+
+https://note.nkmk.me/python-numpy-delete/
+
+## 疎行列の連立方程式をspsolveに変更
+
+66cd84676f21a04e5c0783f64cc4e62bb145678b
+#6 
+
+## K系すべて疎行列化
+Kmatを疎行列に変換することで、後のK11,K12,K22の自動的な疎行列化と、それによるspsolveの高速化
+また、メモリの削減
+
+## 疎行列生成を必ずcoo経由に変更
+
+>データから疎行列を生成 → COO
+算術演算や行列積計算 → CSR
+要素の追加・更新 → LIL
+行の取得 → CSRかLIL
+列の取得 → CSC
+要素・部分行列の取得 → LIL
+
+https://note.nkmk.me/python-scipy-sparse-matrix-csr-csc-coo-lil/
+
+## Ae[i]の計算位置変更
+作ってすぐに使用するように
+
+
+# 速度変化
+
+
+オリジナル(v1.0.1) | 疎行列(v1.1.0) | アルゴリズム変更(v1.2.0)
+-- | -- | --
+Finish reading input text | Finish   reading input text | Finish reading input text
+経過時間: 0.02302098274230957 | 経過時間:   0.02202892303466797 | 経過時間: 0.024077415466308594
+処理時間: 0.02302098274230957 | 処理時間:   0.02202892303466797 | 処理時間: 0.024077415466308594
+YOUNGS MODULUS [Pa] : 100000000000.0 | YOUNGS   MODULUS [Pa] : 100000000000.0 | YOUNGS MODULUS [Pa] : 100000000000.0
+POISSONS RATIO : 0.3 | POISSONS   RATIO : 0.3 | POISSONS RATIO : 0.3
+MAKE D-MATRIX | MAKE   D-MATRIX | MAKE D-MATRIX
+経過時間: 0.02402353286743164 | 経過時間:   0.02202892303466797 | 経過時間: 0.024077415466308594
+処理時間: 0.0010025501251220703 | 処理時間:   0.0010008811950683594 | 処理時間: 0.0
+MAKE B-MATRIX | MAKE   B-MATRIX | MAKE B-MATRIX
+経過時間: 0.2402188777923584 | 経過時間:   0.24022746086120605 | 経過時間: 0.20418691635131836
+処理時間: 0.21619534492492676 | 処理時間:   0.21719765663146973 | 処理時間: 0.18010950088500977
+MAKE K-MATRIX | MAKE   K-MATRIX | MAKE K-MATRIX
+経過時間: 0.8447692394256592 | 経過時間:   0.945798397064209 | 経過時間: 1.8006300926208496
+処理時間: 0.6045503616333008 | 処理時間:   0.7055709362030029 | 処理時間: 1.5964431762695312
+MAKE SUB-MATRIX | MAKE   SUB-MATRIX | MAKE SUB-MATRIX
+経過時間: 72.64510846138 | 経過時間:   74.43765878677368 | 経過時間: 1.8036329746246338
+処理時間: 71.80033922195435 | 処理時間:   73.49186038970947 | 処理時間: 0.0030028820037841797
+MAKE K11-INV-MATRIX | MAKE   K11-INV-MATRIX | MAKE K11-INV-MATRIX
+経過時間: 87.81413722038269 | 経過時間:   74.55477452278137 | 経過時間: 1.8036329746246338
+処理時間: 15.169028759002686 | 処理時間:   0.11711573600769043 | 処理時間: 0.0010008811950683594
+SOLVE U-MATRIX | SOLVE   U-MATRIX | SOLVE U-MATRIX
+経過時間: 87.8561749458313 | 経過時間:   75.41254615783691 | 経過時間: 1.8406667709350586
+処理時間: 0.0420377254486084 | 処理時間:   0.857771635055542 | 処理時間: 0.036032915115356445
+SOLVE F-MATRIX | SOLVE   F-MATRIX | SOLVE F-MATRIX
+経過時間: 87.8561749458313 | 経過時間:   75.41354703903198 | 経過時間: 1.8406667709350586
+処理時間: 0.0 | 処理時間:   0.0 | 処理時間: 0.0
+CALCULATE DISPLACEMENT | CALCULATE   DISPLACEMENT | CALCULATE DISPLACEMENT
+経過時間: 87.864182472229 | 経過時間:   75.42055320739746 | 経過時間: 1.8416681289672852
+処理時間: 0.008007526397705078 | 処理時間:   0.007006168365478516 | 処理時間: 0.0010013580322265625
+CALCULATE DISTRIBUTIONS | CALCULATE   DISTRIBUTIONS | CALCULATE DISTRIBUTIONS
+経過時間: 87.99129819869995 | 経過時間:   75.5306625366211 | 経過時間: 1.9537694454193115
+処理時間: 0.12711572647094727 | 処理時間:   0.11010932922363281 | 処理時間: 0.11210131645202637
+
+
+
+
+# Version1.2.1変更点
+
+このプログラムでは+=を使用していなく、いきなり代入をしているため影響はないが、今後のプログラムで問題になる&元のfortranプログラムに忠実にするために初期化位置を変更。
+具体的には、e_Kmat、BtD、BtDBを各プログラムの最初に初期化していたが、要素ごとに初期化するように変更した。
+
+## What's Changed
+* 変数初期化一を変更 by @yuki-2000 in https://github.com/yuki-2000/Basic_2D3Node_FEM/pull/8
+
+
+**Full Changelog**: https://github.com/yuki-2000/Basic_2D3Node_FEM/compare/v1.2.0...v1.2.1
