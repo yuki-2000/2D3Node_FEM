@@ -127,27 +127,48 @@ readlines()で各行のリストにしてから、`split('!')[0]`で`!`より前
 弾性剛性マトリックスDの作成
 
 
-![\begin{equation}
+$$
+\begin{equation}
  \sigma = D \epsilon
 \end{equation}
-](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Clarge+%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A+%5Csigma+%3D+D+%5Cepsilon%0A%5Cend%7Bequation%7D%0A)
+$$
+
 
 #### 平面応力状態での応力ーひずみ関係式
 
-![\begin{equation}
-\begin{Bmatrix} \sigma_x \\ \sigma_y \\ \tau_{xy} \end{Bmatrix}
-=\frac{E}{1-\nu^2}\begin{bmatrix} 1 & \nu & 0 \\ \nu & 1 & 0 \\ 0 & 0 & \cfrac{1-\nu}{2} \end{bmatrix}
-\begin{Bmatrix} \epsilon_x \\ \epsilon_y \\ \gamma_{xy} \end{Bmatrix}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7BBmatrix%7D+%5Csigma_x+%5C%5C+%5Csigma_y+%5C%5C+%5Ctau_%7Bxy%7D+%5Cend%7BBmatrix%7D%0A%3D%5Cfrac%7BE%7D%7B1-%5Cnu%5E2%7D%5Cbegin%7Bbmatrix%7D+1+%26+%5Cnu+%26+0+%5C%5C+%5Cnu+%26+1+%26+0+%5C%5C+0+%26+0+%26+%5Ccfrac%7B1-%5Cnu%7D%7B2%7D+%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+%5Cepsilon_x+%5C%5C+%5Cepsilon_y+%5C%5C+%5Cgamma_%7Bxy%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
+$$
+\begin{equation}
+\begin{Bmatrix} 
+\sigma_x \\ 
+\sigma_y \\ 
+\tau_{xy} 
+\end{Bmatrix}
+=\frac{E}{1-\nu^2}\begin{bmatrix} 1 & \nu & 0 \\
+\nu & 1 & 0 \\
+0 & 0 & \cfrac{1-\nu}{2} 
+\end{bmatrix}
+\begin{Bmatrix} 
+\epsilon_x \\
+\epsilon_y \\
+\gamma_{xy} 
+\end{Bmatrix}
+\end{equation}
+$$
 
 #### 平面ひずみ状態での応力ーひずみ関係式
 
-![\begin{equation}
-\begin{Bmatrix} \sigma_x \\ \sigma_y \\ \tau_{xy} \end{Bmatrix}
-=\frac{E}{(1+\nu)(1-2\nu)}\begin{bmatrix} 1-\nu & \nu & 0 \\ \nu & 1-\nu & 0 \\ 0 & 0 & \cfrac{1-2\nu}{2} \end{bmatrix}
-\begin{Bmatrix} \epsilon_x \\ \epsilon_y \\ \gamma_{xy} \end{Bmatrix}
+$$\begin{equation}
+\begin{Bmatrix} \sigma_x \\
+\sigma_y \\
+\tau_{xy} \end{Bmatrix}
+=\frac{E}{(1+\nu)(1-2\nu)}\begin{bmatrix} 1-\nu & \nu & 0 \\
+\nu & 1-\nu & 0 \\
+0 & 0 & \cfrac{1-2\nu}{2} \end{bmatrix}
+\begin{Bmatrix} \epsilon_x \\
+\epsilon_y \\
+\gamma_{xy} \end{Bmatrix}
 \end{equation}
-](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7BBmatrix%7D+%5Csigma_x+%5C%5C+%5Csigma_y+%5C%5C+%5Ctau_%7Bxy%7D+%5Cend%7BBmatrix%7D%0A%3D%5Cfrac%7BE%7D%7B%281%2B%5Cnu%29%281-2%5Cnu%29%7D%5Cbegin%7Bbmatrix%7D+1-%5Cnu+%26+%5Cnu+%26+0+%5C%5C+%5Cnu+%26+1-%5Cnu+%26+0+%5C%5C+0+%26+0+%26+%5Ccfrac%7B1-2%5Cnu%7D%7B2%7D+%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+%5Cepsilon_x+%5C%5C+%5Cepsilon_y+%5C%5C+%5Cgamma_%7Bxy%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D%0A)
+$$
 
 
 
@@ -162,20 +183,27 @@ https://qiita.com/damyarou/items/8ca3432f9bba20a1f5ea
 形状関数Nについて、三角形要素(CST要素)での任意の点の変位は以下のようにあらわすことができる。
 （要素内の座標はNに含まれている。）
 
-![\begin{equation}
-\begin{Bmatrix} u \\ v \end{Bmatrix}
+$$
+\begin{equation}
+\begin{Bmatrix} u \\
+v \end{Bmatrix}
 =[\boldsymbol{N_e}]\{\boldsymbol{d_e}\}
 =\begin{bmatrix}
 N_i & 0   & N_j & 0   & N_k & 0   \\
 0   & N_i & 0   & N_j & 0   & N_k
 \end{bmatrix}
-\begin{Bmatrix} u_1 \\ v_1 \\ u_2\\ v_2 \\u_3 \\v_3 \end{Bmatrix}
-\end{equation}
-](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7BBmatrix%7D+u+%5C%5C+v+%5Cend%7BBmatrix%7D%0A%3D%5B%5Cboldsymbol%7BN_e%7D%5D%5C%7B%5Cboldsymbol%7Bd_e%7D%5C%7D%0A%3D%5Cbegin%7Bbmatrix%7D%0AN_i+%26+0+++%26+N_j+%26+0+++%26+N_k+%26+0+++%5C%5C%0A0+++%26+N_i+%26+0+++%26+N_j+%26+0+++%26+N_k%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_1+%5C%5C+v_1+%5C%5C+u_2%5C%5C+v_2+%5C%5Cu_3+%5C%5Cv_3+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D%0A)
+\begin{Bmatrix} u_1 \\
+v_1 \\
+u_2\\
+v_2 \\
+u_3 \\
+v_3 \end{Bmatrix}
+\end{equation}$$
 
 よって、ひずみを求めるために偏微分をすると、ちょうど定数行列となる。
 
-![\begin{equation}
+$$
+\begin{equation}
 \boldsymbol{\epsilon}=
 \begin{Bmatrix}
 \cfrac{\partial u}{\partial x} \\
@@ -189,14 +217,19 @@ N_i & 0   & N_j & 0   & N_k & 0   \\
 \cfrac{\partial N_j}{\partial y} & \cfrac{\partial N_j}{\partial x} &
 \cfrac{\partial N_k}{\partial y} & \cfrac{\partial N_k}{\partial x}
 \end{bmatrix}
-\begin{Bmatrix} u_1 \\ v_1 \\ u_2\\ v_2 \\u_3 \\v_3 \end{Bmatrix}
+\begin{Bmatrix} u_1 \\
+v_1 \\
+u_2\\ 
+v_2 \\
+u_3 \\
+v_3 \end{Bmatrix}
 =[\boldsymbol{B_e}]\{\boldsymbol{d_e}\}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cboldsymbol%7B%5Cepsilon%7D%3D%0A%5Cbegin%7BBmatrix%7D%0A%5Ccfrac%7B%5Cpartial+u%7D%7B%5Cpartial+x%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+v%7D%7B%5Cpartial+y%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+u%7D%7B%5Cpartial+y%7D%2B%5Ccfrac%7B%5Cpartial+v%7D%7B%5Cpartial+x%7D%0A%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7Bbmatrix%7D%0A%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+x%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+x%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+x%7D+%26+0+%5C%5C%0A0+%26+%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+y%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+y%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+y%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+x%7D+%26%0A%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+x%7D+%26%0A%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+x%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_1+%5C%5C+v_1+%5C%5C+u_2%5C%5C+v_2+%5C%5Cu_3+%5C%5Cv_3+%5Cend%7BBmatrix%7D%0A%3D%5B%5Cboldsymbol%7BB_e%7D%5D%5C%7B%5Cboldsymbol%7Bd_e%7D%5C%7D%0A%5Cend%7Bequation%7D)
-
+\end{equation}$$
 
 よってひずみ変位マトリックスBは以下のように計算できる。
 
-![\begin{align}
+$$
+\begin{align}
 [\boldsymbol{B}]
 =\frac{1}{2\Delta}
 \begin{bmatrix}
@@ -210,9 +243,8 @@ y_j-y_k & 0       & y_k-y_i & 0       & y_i-y_j & 0       \\
 0       & x_k-x_j & 0       & x_i-x_k & 0       & x_j-x_i \\
 x_k-x_j & y_j-y_k & x_i-x_k & y_k-y_i & x_j-x_i & y_i-y_j
 \end{bmatrix} \\
-\Delta=&1/2\cdot[(x_k-x_j)y_i+(x_i-x_k)y_j+(x_j-x_i)y_k] \qquad \text{(Element area)}
-\end{align}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Balign%7D%0A%5B%5Cboldsymbol%7BB%7D%5D%0A%3D%5Cfrac%7B1%7D%7B2%5CDelta%7D%0A%5Cbegin%7Bbmatrix%7D%0Ab_i+%26+0+++%26+b_j+%26+0+++%26+b_k+%26+0+++%5C%5C%0A0+++%26+c_i+%26+0+++%26+c_j+%26+0+++%26+c_k+%5C%5C%0Ac_i+%26+b_i+%26+c_j+%26+b_j+%26+c_k+%26+b_k+%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%3D%5Cfrac%7B1%7D%7B2%5CDelta%7D%0A%5Cbegin%7Bbmatrix%7D%0Ay_j-y_k+%26+0+++++++%26+y_k-y_i+%26+0+++++++%26+y_i-y_j+%26+0+++++++%5C%5C%0A0+++++++%26+x_k-x_j+%26+0+++++++%26+x_i-x_k+%26+0+++++++%26+x_j-x_i+%5C%5C%0Ax_k-x_j+%26+y_j-y_k+%26+x_i-x_k+%26+y_k-y_i+%26+x_j-x_i+%26+y_i-y_j%0A%5Cend%7Bbmatrix%7D+%5C%5C%0A%5CDelta%3D%261%2F2%5Ccdot%5B%28x_k-x_j%29y_i%2B%28x_i-x_k%29y_j%2B%28x_j-x_i%29y_k%5D+%5Cqquad+%5Ctext%7B%28Element+area%29%7D%0A%5Cend%7Balign%7D)
-
+\Delta=1/2\cdot[(x_k-x_j)y_i+(x_i-x_k)y_j+(x_j-x_i)y_k] \qquad \text{(Element area)}
+\end{align}$$
 
 
 ### プログラム解説
@@ -238,113 +270,137 @@ x_k-x_j & y_j-y_k & x_i-x_k & y_k-y_i & x_j-x_i & y_i-y_j
 厚さ`h`が一定値であり、Bマトリクスが三角形要素の時は定数のため、
 __ある要素element__ において、弱形式より以下が成り立つ。
 
-![\begin{equation}
+$$
+\begin{equation}
 [\boldsymbol{K_e}]=\int_A[\boldsymbol{B_e}]^T[\boldsymbol{D_e}][\boldsymbol{B_e}]hdA=h\cdot\Delta\cdot[\boldsymbol{B_e}]^T[\boldsymbol{D_e}][\boldsymbol{B_e}]
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5B%5Cboldsymbol%7BK_e%7D%5D%3D%5Cint_A%5B%5Cboldsymbol%7BB_e%7D%5D%5ET%5B%5Cboldsymbol%7BD_e%7D%5D%5B%5Cboldsymbol%7BB_e%7D%5DhdA%3Dh%5Ccdot%5CDelta%5Ccdot%5B%5Cboldsymbol%7BB_e%7D%5D%5ET%5B%5Cboldsymbol%7BD_e%7D%5D%5B%5Cboldsymbol%7BB_e%7D%5D%0A%5Cend%7Bequation%7D)
+\end{equation}
+$$
 
-![\begin{equation}
+$$
+\begin{equation}
  K_e d_e =F_e \\
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A+K_e+d_e+%3DF_e+%5C%5C%0A%5Cend%7Bequation%7D)
-
+\end{equation}
+$$
 
 例えば、節点[200,204,205]で構成されるelementについて、以下が成り立つ。
 
 
 
 
-![\begin{equation}
+$$
+\begin{equation}
 \begin{bmatrix}
-k_11 & k_12 & k_13 & k_14 & k_15 & k_16 \\
-k_21 & k_22 & k_23 & k_24 & k_25 & k_26 \\
-k_31 & k_32 & k_33 & k_34 & k_35 & k_36 \\
-k_41 & k_42 & k_43 & k_44 & k_45 & k_46 \\
-k_51 & k_52 & k_53 & k_54 & k_55 & k_56 \\
-k_61 & k_62 & k_63 & k_54 & k_65 & k_66
+k_{11} & k_{12} & k_{13} & k_{14} & k_{15} & k_{16} \\
+k_{21} & k_{22} & k_{23} & k_{24} & k_{25} & k_{26} \\
+k_{31} & k_{32} & k_{33} & k_{34} & k_{35} & k_{36} \\
+k_{41} & k_{42} & k_{43} & k_{44} & k_{45} & k_{46} \\
+k_{51} & k_{52} & k_{53} & k_{54} & k_{55} & k_{56} \\
+k_{61} & k_{62} & k_{63} & k_{54} & k_{65} & k_{66}
 \end{bmatrix}
-\begin{Bmatrix} u_200 \\ v_200 \\ u_204\\ v_204 \\u_205 \\v_205 \end{Bmatrix}
-=\begin{Bmatrix} F_{x200} \\  F_{y200} \\ F_{x204}\\ F_{y204} \\  F_{x205} \\  F_{y205} \end{Bmatrix}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0Ak_11+%26+k_12+%26+k_13+%26+k_14+%26+k_15+%26+k_16+%5C%5C%0Ak_21+%26+k_22+%26+k_23+%26+k_24+%26+k_25+%26+k_26+%5C%5C%0Ak_31+%26+k_32+%26+k_33+%26+k_34+%26+k_35+%26+k_36+%5C%5C%0Ak_41+%26+k_42+%26+k_43+%26+k_44+%26+k_45+%26+k_46+%5C%5C%0Ak_51+%26+k_52+%26+k_53+%26+k_54+%26+k_55+%26+k_56+%5C%5C%0Ak_61+%26+k_62+%26+k_63+%26+k_54+%26+k_65+%26+k_66%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_200+%5C%5C+v_200+%5C%5C+u_204%5C%5C+v_204+%5C%5Cu_205+%5C%5Cv_205+%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+F_%7Bx200%7D+%5C%5C++F_%7By200%7D+%5C%5C+F_%7Bx204%7D%5C%5C+F_%7By204%7D+%5C%5C++F_%7Bx205%7D+%5C%5C++F_%7By205%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
-
-
+\begin{Bmatrix} u_{200} \\
+v_{200} \\
+u_{204}\\
+v_{204} \\
+u_{205} \\
+v_{205} \end{Bmatrix}
+=\begin{Bmatrix} F_{x200} \\
+F_{y200} \\
+F_{x204}\\
+F_{y204} \\ 
+F_{x205} \\ 
+F_{y205} \end{Bmatrix}
+\end{equation}
+$$
 
 これについて、例えば節点200の荷重について、以下が成り立つ。
 
-![\begin{equation}
+$$
+\begin{equation}
 \begin{bmatrix}
-k_11 & k_12  \\
-k_21 & k_22 
+k_{11} & k_{12}  \\
+k_{21} & k_{22} 
 \end{bmatrix}
-\begin{Bmatrix} u_200 \\ v_200 \end{Bmatrix}
+\begin{Bmatrix} u_{200} \\
+v_{200} \end{Bmatrix}
 +\begin{bmatrix}
-k_13 & k_14  \\
-k_23 & k_24 
+k_{13} & k_{14}  \\
+k_{23} & k_{24} 
 \end{bmatrix}
-\begin{Bmatrix} u_204 \\ v_204 \end{Bmatrix}
+\begin{Bmatrix} u_{204} \\ 
+v_{204} \end{Bmatrix}
 +\begin{bmatrix}
-k_15 & k_16 \\
-k_25 & k_26 
+k_{15} & k_{16} \\
+k_{25} & k_{26} 
 \end{bmatrix}
-\begin{Bmatrix} u_206 \\ v_206 \end{Bmatrix}
-=\begin{Bmatrix} F_{x200} \\  F_{y200} \end{Bmatrix}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0Ak_11+%26+k_12++%5C%5C%0Ak_21+%26+k_22+%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_200+%5C%5C+v_200+%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0Ak_13+%26+k_14++%5C%5C%0Ak_23+%26+k_24+%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_204+%5C%5C+v_204+%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0Ak_15+%26+k_16+%5C%5C%0Ak_25+%26+k_26+%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_206+%5C%5C+v_206+%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+F_%7Bx200%7D+%5C%5C++F_%7By200%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
-
+\begin{Bmatrix} u_{206} \\
+v_{206} \end{Bmatrix}
+=\begin{Bmatrix} F_{x200} \\
+F_{y200} \end{Bmatrix}
+\end{equation}
+$$
 
 
 全体の行列に組み込むと、以下のようになる。
 
 
-
-![\begin{equation}
+$$
+\begin{equation}
 \begin{bmatrix}
      0       & \cdots     &    0        &        0       & \cdots  &       0   \\
 \vdots & \ddots    & \vdots &   \vdots   & \ddots & \vdots \\
-     0       &   \cdots   &  k_11  & k_12       & \cdots   &     0   \\
-     0       &   \cdots   & k_21  & k_22        & \cdots   &    0    \\
+     0       &   \cdots   &  k_{11}  & k_{12}       & \cdots   &     0   \\
+     0       &   \cdots   & k_{21}  & k_{22}        & \cdots   &    0    \\
 \vdots & \ddots    &\vdots &   \vdots    & \ddots & \vdots \\
   0         &    \cdots  &      0      &       0           &  \cdots  &    0
 \end{bmatrix}
 \begin{Bmatrix}
 0 \\
 \vdots  \\
-u_200 \\
-v_200\\
+u_{200} \\
+v_{200}\\
 \vdots \\
 0\\
 \end{Bmatrix}
 +\begin{bmatrix}
      0       & \cdots     &    0        &        0       & \cdots  &       0   \\
 \vdots & \ddots    & \vdots &   \vdots   & \ddots & \vdots \\
-     0       &   \cdots   &  k_13  & k_14       & \cdots   &     0   \\
-     0       &   \cdots   & k_23  & k_24        & \cdots   &    0    \\
+     0       &   \cdots   &  k_{13}  & k_{14}       & \cdots   &     0   \\
+     0       &   \cdots   & k_{23}  & k_{24}        & \cdots   &    0    \\
 \vdots & \ddots    &\vdots &   \vdots    & \ddots & \vdots \\
   0         &    \cdots  &      0      &       0           &  \cdots  &    0
 \end{bmatrix}
 \begin{Bmatrix}
 0 \\
 \vdots  \\
-u_204 \\
-v_204\\
+u_{204} \\
+v_{204}\\
 \vdots \\
 0\\
 \end{Bmatrix}
 +\begin{bmatrix}
      0       & \cdots     &    0        &        0       & \cdots  &       0   \\
 \vdots & \ddots    & \vdots &   \vdots   & \ddots & \vdots \\
-     0       &   \cdots   &  k_15  & k_16       & \cdots   &     0   \\
-     0       &   \cdots   & k_25  & k_26        & \cdots   &    0    \\
+     0       &   \cdots   &  k_{15}  & k_{16}       & \cdots   &     0   \\
+     0       &   \cdots   & k_{25}  & k_{26}        & \cdots   &    0    \\
 \vdots & \ddots    &\vdots &   \vdots    & \ddots & \vdots \\
   0         &    \cdots  &      0      &       0           &  \cdots  &    0
 \end{bmatrix}
 \begin{Bmatrix}
 0 \\
 \vdots  \\
-u_205 \\
-v_205\\
+u_{205} \\
+v_{205}\\
 \vdots \\
 0\\
 \end{Bmatrix}
-=\begin{Bmatrix} 0 \\ \vdots \\ F_{x200} \\  F_{y200} \\  \vdots \\ 0  \end{Bmatrix}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_11++%26+k_12+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_21++%26+k_22++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_200+%5C%5C%0Av_200%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_13++%26+k_14+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_23++%26+k_24++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_204+%5C%5C%0Av_204%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%2B%5Cbegin%7Bbmatrix%7D%0A+++++0+++++++%26+%5Ccdots+++++%26++++0++++++++%26++++++++0+++++++%26+%5Ccdots++%26+++++++0+++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26+%5Cvdots+%26+++%5Cvdots+++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26++k_15++%26+k_16+++++++%26+%5Ccdots+++%26+++++0+++%5C%5C%0A+++++0+++++++%26+++%5Ccdots+++%26+k_25++%26+k_26++++++++%26+%5Ccdots+++%26++++0++++%5C%5C%0A%5Cvdots+%26+%5Cddots++++%26%5Cvdots+%26+++%5Cvdots++++%26+%5Cddots+%26+%5Cvdots+%5C%5C%0A++0+++++++++%26++++%5Ccdots++%26++++++0++++++%26+++++++0+++++++++++%26++%5Ccdots++%26++++0%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D%0A0+%5C%5C%0A%5Cvdots++%5C%5C%0Au_205+%5C%5C%0Av_205%5C%5C%0A%5Cvdots+%5C%5C%0A0%5C%5C%0A%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+0+%5C%5C+%5Cvdots+%5C%5C+F_%7Bx200%7D+%5C%5C++F_%7By200%7D+%5C%5C++%5Cvdots+%5C%5C+0++%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
+=\begin{Bmatrix} 0 \\
+\vdots \\
+F_{x200} \\
+F_{y200} \\
+\vdots \\
+0  \end{Bmatrix}
+\end{equation}
+$$
 
 
 
@@ -396,15 +452,18 @@ x:1、y:2ということと、行列でxy交互に並んでいることからう
 
 K、U、Fを並べ替えて未知成分、既知成分に分けたブロック行列を作成する。
 
-![\begin{equation}
+$$
+\begin{equation}
 \begin{bmatrix}
-K_11 & K_12  \\
-K_21 & K_22 
+K_{11} & K_{12}  \\
+K_{21} & K_{22} 
 \end{bmatrix}
-\begin{Bmatrix} d_{1unknown} \\ d_{2known} \end{Bmatrix}
-=\begin{Bmatrix} F_{1known} \\  F_{2unknown} \end{Bmatrix}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bbmatrix%7D%0AK_11+%26+K_12++%5C%5C%0AK_21+%26+K_22+%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+d_%7B1unknown%7D+%5C%5C+d_%7B2known%7D+%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7BBmatrix%7D+F_%7B1known%7D+%5C%5C++F_%7B2unknown%7D+%5Cend%7BBmatrix%7D%0A%5Cend%7Bequation%7D)
-
+\begin{Bmatrix} d_{1unknown} \\
+d_{2known} \end{Bmatrix}
+=\begin{Bmatrix} F_{1known} \\
+F_{2unknown} \end{Bmatrix}
+\end{equation}
+$$
 
 
 Ax=bに関して、xのi行をj行に入れ替えたとすると、Aのうち関係するi列をj列に入れ替える必要がある。
@@ -430,10 +489,10 @@ K11の逆行列を計算
 
 節点変位ベクトルを求める。
 
-![\begin{equation}
+$$
+\begin{equation}
 \boldsymbol{d_{1unknown}}=\boldsymbol{K_11}^{-1}(\boldsymbol{F_{1known}} - \boldsymbol{K_12}\boldsymbol{d_{2known}})
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cboldsymbol%7Bd_%7B1unknown%7D%7D%3D%5Cboldsymbol%7BK_11%7D%5E%7B-1%7D%28%5Cboldsymbol%7BF_%7B1known%7D%7D+-+%5Cboldsymbol%7BK_12%7D%5Cboldsymbol%7Bd_%7B2known%7D%7D%29%0A%5Cend%7Bequation%7D)
-
+\end{equation}$$
 その後元の`Umat`に代入しなおす。
 
 
@@ -442,10 +501,9 @@ K11の逆行列を計算
 
 節点荷重ベクトルを求める。
 
-![\begin{equation}
+$$\begin{equation}
 \boldsymbol{F_{2unknown}}=\boldsymbol{K_21}\boldsymbol{d_{1nowknown}} +\boldsymbol{K_22}\boldsymbol{d_{2known}} 
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cboldsymbol%7BF_%7B2unknown%7D%7D%3D%5Cboldsymbol%7BK_21%7D%5Cboldsymbol%7Bd_%7B1nowknown%7D%7D+%2B%5Cboldsymbol%7BK_22%7D%5Cboldsymbol%7Bd_%7B2known%7D%7D+%0A%5Cend%7Bequation%7D)
-
+\end{equation}$$
 その後元の`Fmat`に代入しなおす。
 
 
@@ -467,7 +525,8 @@ K11の逆行列を計算
 
 ひずみ
 
-![\begin{equation}
+$$
+\begin{equation}
 \boldsymbol{\epsilon}=
 \begin{Bmatrix}
 \cfrac{\partial u}{\partial x} \\
@@ -481,19 +540,24 @@ K11の逆行列を計算
 \cfrac{\partial N_j}{\partial y} & \cfrac{\partial N_j}{\partial x} &
 \cfrac{\partial N_k}{\partial y} & \cfrac{\partial N_k}{\partial x}
 \end{bmatrix}
-\begin{Bmatrix} u_1 \\ v_1 \\ u_2\\ v_2 \\u_3 \\v_3 \end{Bmatrix}
+\begin{Bmatrix} u_1 \\
+v_1 \\ 
+u_2\\ 
+v_2 \\
+u_3 \\
+v_3 \end{Bmatrix}
 =[\boldsymbol{B_e}]\{\boldsymbol{d_e}\}
-\end{equation}](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A%5Cboldsymbol%7B%5Cepsilon%7D%3D%0A%5Cbegin%7BBmatrix%7D%0A%5Ccfrac%7B%5Cpartial+u%7D%7B%5Cpartial+x%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+v%7D%7B%5Cpartial+y%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+u%7D%7B%5Cpartial+y%7D%2B%5Ccfrac%7B%5Cpartial+v%7D%7B%5Cpartial+x%7D%0A%5Cend%7BBmatrix%7D%0A%3D%5Cbegin%7Bbmatrix%7D%0A%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+x%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+x%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+x%7D+%26+0+%5C%5C%0A0+%26+%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+y%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+y%7D+%26+0+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+y%7D+%5C%5C%0A%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_i%7D%7B%5Cpartial+x%7D+%26%0A%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_j%7D%7B%5Cpartial+x%7D+%26%0A%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+y%7D+%26+%5Ccfrac%7B%5Cpartial+N_k%7D%7B%5Cpartial+x%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7BBmatrix%7D+u_1+%5C%5C+v_1+%5C%5C+u_2%5C%5C+v_2+%5C%5Cu_3+%5C%5Cv_3+%5Cend%7BBmatrix%7D%0A%3D%5B%5Cboldsymbol%7BB_e%7D%5D%5C%7B%5Cboldsymbol%7Bd_e%7D%5C%7D%0A%5Cend%7Bequation%7D)
-
+\end{equation}
+$$
 
 応力
 
 
-![\begin{equation}
+$$
+\begin{equation}
  \sigma = D \epsilon
 \end{equation}
-](https://render.githubusercontent.com/render/math?math=%5Ccolor%7Bblack%7D%5Clarge+%5Cdisplaystyle+%5Cbegin%7Bequation%7D%0A+%5Csigma+%3D+D+%5Cepsilon%0A%5Cend%7Bequation%7D%0A)
-
+$$
 
 
 ## メッシュの可視化
